@@ -12,7 +12,7 @@
         <div id="login-page" class="page">
             <div class="login-container">
                 <h1>AI Tools</h1>
-                <p class="subtitle">大模型对话 & MCP服务管理</p>
+                <p class="subtitle">大模型对话 & 工具调用</p>
                 <div class="login-tabs">
                     <button class="tab-btn active" data-tab="login">登录</button>
                     <button class="tab-btn" data-tab="register">注册</button>
@@ -50,7 +50,7 @@
                 <div class="sidebar-nav">
                     <button class="nav-btn active" data-page="chat">💬 对话</button>
                     <button class="nav-btn" data-page="users" id="nav-users" style="display:none">👥 用户管理</button>
-                    <button class="nav-btn" data-page="mcp" id="nav-mcp" style="display:none">🔧 MCP服务</button>
+                    <button class="nav-btn" data-page="tools" id="nav-tools" style="display:none">🔧 工具</button>
                 </div>
                 <div class="sidebar-footer">
                     <button class="btn-logout" id="btn-logout">退出登录</button>
@@ -128,12 +128,39 @@
                     </div>
                 </div>
 
-                <div id="page-mcp" class="page-content">
+                <div id="page-tools" class="page-content">
                     <div class="page-header">
-                        <h2>MCP服务管理</h2>
-                        <button class="btn-primary" id="btn-add-mcp">+ 添加服务</button>
+                        <h2>工具管理</h2>
                     </div>
-                    <div class="mcp-service-list" id="mcp-service-list"></div>
+
+                    <div class="tools-section">
+                        <h3>📦 内置工具</h3>
+                        <p class="section-desc">以下内置工具始终可用，无需额外配置</p>
+                        <div class="mcp-service-list" id="builtin-tools-list">
+                            <div class="mcp-card">
+                                <div class="mcp-card-header">
+                                    <span class="mcp-card-name">📅 get_current_date</span>
+                                    <span class="mcp-card-badge builtin">内置</span>
+                                </div>
+                                <div class="mcp-card-desc">获取当前日期和时间，包括年、月、日、时、分、秒、星期</div>
+                            </div>
+                            <div class="mcp-card">
+                                <div class="mcp-card-header">
+                                    <span class="mcp-card-name">🌤️ get_weather</span>
+                                    <span class="mcp-card-badge builtin">内置</span>
+                                </div>
+                                <div class="mcp-card-desc">查询指定城市的当前天气信息，包括温度、湿度、天气状况、风速等</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tools-section">
+                        <div class="page-header">
+                            <h3>🔌 MCP服务</h3>
+                            <button class="btn-primary" id="btn-add-mcp">+ 添加服务</button>
+                        </div>
+                        <div class="mcp-service-list" id="mcp-service-list"></div>
+                    </div>
 
                     <div id="mcp-edit-modal" class="modal" style="display:none">
                         <div class="modal-content">
@@ -180,10 +207,10 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
-    <script src="/js/api.js?v=4"></script>
-    <script src="/js/chat.js?v=4"></script>
-    <script src="/js/users.js?v=4"></script>
-    <script src="/js/mcp.js?v=4"></script>
-    <script src="/js/app.js?v=4"></script>
+    <script src="/js/api.js?v=5"></script>
+    <script src="/js/chat.js?v=5"></script>
+    <script src="/js/users.js?v=5"></script>
+    <script src="/js/mcp.js?v=5"></script>
+    <script src="/js/app.js?v=5"></script>
 </body>
 </html>

@@ -13,6 +13,7 @@ from models.chat_history import ChatHistory
 from models.mcp_service import MCPService
 from services.llm_service import llm_service
 from services.mcp_client import mcp_client_manager
+from services.builtin_tools import BUILTIN_TOOLS, BUILTIN_SERVICE_NAME, execute_builtin_tool
 from routers.auth import get_current_user
 
 router = APIRouter(prefix="/api/chat", tags=["chat"])
@@ -52,6 +53,11 @@ async def send_message(
 
     all_tools = []
     tool_to_service_map = {}
+
+    for tool in BUILTIN_TOOLS:
+        all_tools.append(tool)
+        tool_to_service_map[tool["name"]] = BUILTIN_SERVICE_NAME
+
     for svc in active_services:
         config = {
             "name": svc.name,
@@ -105,9 +111,28 @@ async def send_message(
                 })
 
                 tool_results = []
-                async for event in llm_service.execute_tool_calls(
-                    tool_calls_collected,
-                    [
+                mcp_tool_calls = []
+                for tc in tool_calls_collected:
+                    func_name = tc["function"]["name"]
+                    service_name = tool_to_service_map.get(func_name, "")
+                    if service_name == BUILTIN_SERVICE_NAME:
+                        try:
+                            func_args = json.loads(tc["function"]["arguments"])
+                        except json.JSONDecodeError:
+                            func_args = {}
+                        yield f"data: {json.dumps({'type': 'tool_start', 'tool_name': func_name, 'arguments': func_args})}\n\n"
+                        result = await execute_builtin_tool(func_name, func_args)
+                        yield f"data: {json.dumps({'type': 'tool_result', 'tool_name': func_name, 'result': result})}\n\n"
+                        tool_results.append({
+                            "role": "tool",
+                            "tool_call_id": tc["id"],
+                            "content": json.dumps(result, ensure_ascii=False),
+                        })
+                    else:
+                        mcp_tool_calls.append(tc)
+
+                if mcp_tool_calls:
+                    mcp_service_configs = [
                         {
                             "name": s.name,
                             "transport_type": s.transport_type,
@@ -118,15 +143,16 @@ async def send_message(
                             "headers": s.headers,
                         }
                         for s in active_services
-                    ],
-                    tool_to_service_map,
-                ):
-                    if event["type"] == "tool_start":
-                        yield f"data: {json.dumps({'type': 'tool_start', 'tool_name': event['tool_name'], 'arguments': event['arguments']})}\n\n"
-                    elif event["type"] == "tool_result":
-                        yield f"data: {json.dumps({'type': 'tool_result', 'tool_name': event['tool_name'], 'result': event['result']})}\n\n"
-                    elif event["type"] == "tool_results_complete":
-                        tool_results = event["results"]
+                    ]
+                    async for event in llm_service.execute_tool_calls(
+                        mcp_tool_calls, mcp_service_configs, tool_to_service_map,
+                    ):
+                        if event["type"] == "tool_start":
+                            yield f"data: {json.dumps({'type': 'tool_start', 'tool_name': event['tool_name'], 'arguments': event['arguments']})}\n\n"
+                        elif event["type"] == "tool_result":
+                            yield f"data: {json.dumps({'type': 'tool_result', 'tool_name': event['tool_name'], 'result': event['result']})}\n\n"
+                        elif event["type"] == "tool_results_complete":
+                            tool_results.extend(event["results"])
 
                 for tr in tool_results:
                     messages.append(tr)

@@ -98,7 +98,7 @@ function onLoginSuccess(user) {
     currentUsername.textContent = user.display_name || user.username;
     adminBadge.style.display = user.is_admin ? 'inline' : 'none';
     document.getElementById('nav-users').style.display = user.is_admin ? 'block' : 'none';
-    document.getElementById('nav-mcp').style.display = user.is_admin ? 'block' : 'none';
+    document.getElementById('nav-tools').style.display = user.is_admin ? 'block' : 'none';
 
     loginPage.style.display = 'none';
     mainPage.style.display = 'flex';
@@ -136,7 +136,7 @@ function initNavigation() {
         btn.addEventListener('click', () => {
             const page = btn.dataset.page;
             if (page === 'users' && !currentUser?.is_admin) return;
-            if (page === 'mcp' && !currentUser?.is_admin) return;
+            if (page === 'tools' && !currentUser?.is_admin) return;
             if (page === 'chat' && document.getElementById('page-chat').classList.contains('active')) {
                 newChat();
                 return;
@@ -155,6 +155,6 @@ function navigateTo(page) {
     if (pageEl) pageEl.classList.add('active');
 
     if (page === 'users') loadUsers();
-    if (page === 'mcp') loadMCPServices();
+    if (page === 'tools') loadMCPServices();
     if (page === 'chat') loadConversations();
 }

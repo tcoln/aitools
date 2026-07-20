@@ -36,7 +36,7 @@ async function loadMCPServices() {
             btn.addEventListener('click', () => deleteMCPService(btn.dataset.id));
         });
     } catch (e) {
-        alert('加载MCP服务列表失败: ' + e.message);
+        alert('加载工具列表失败: ' + e.message);
     }
 }
 
