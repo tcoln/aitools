@@ -215,6 +215,37 @@ async def send_message(
     )
 
 
+@router.get("/tools")
+async def list_chat_tools(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    tools = []
+
+    for tool in BUILTIN_TOOLS:
+        icon = "📅" if "date" in tool["name"] else "🌤️"
+        tools.append({
+            "name": tool["name"],
+            "description": tool["description"],
+            "type": "builtin",
+            "icon": icon,
+        })
+
+    result = await db.execute(
+        select(MCPService).where(MCPService.is_active == True).order_by(MCPService.created_at.desc())
+    )
+    services = result.scalars().all()
+    for svc in services:
+        tools.append({
+            "name": svc.name,
+            "description": svc.description or "",
+            "type": "mcp",
+            "icon": "🔌",
+        })
+
+    return tools
+
+
 @router.get("/conversations")
 async def list_conversations(
     current_user: User = Depends(get_current_user),

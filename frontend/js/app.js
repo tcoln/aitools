@@ -158,7 +158,7 @@ function navigateTo(page) {
 
     if (page === 'users') loadUsers();
     if (page === 'tools') loadMCPServices();
-    if (page === 'chat') loadConversations();
+    if (page === 'chat') { loadConversations(); loadChatTools(); }
 }
 
 function initSidebarToggle() {

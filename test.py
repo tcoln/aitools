@@ -4,7 +4,7 @@ mcp = FastMCP("Demo 🚀")
 
 @mcp.tool
 def multiple(a: int, b: int) -> int:
-    """multiple two numbers"""
+    """整数相乘"""
     return a * b
 
 if __name__ == "__main__":

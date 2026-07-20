@@ -285,3 +285,83 @@ function renderAttachments() {
         </div>
     `}).join('');
 }
+
+let allTools = [];
+let toolsPage = 0;
+const TOOLS_PER_PAGE = 3;
+
+async function loadChatTools() {
+    try {
+        const tools = await api.chat.getTools();
+        allTools = tools;
+        toolsPage = 0;
+        renderToolsGrid();
+    } catch (err) {
+        console.error('加载工具列表失败:', err);
+        const grid = document.getElementById('chat-tools-grid');
+        if (grid) grid.classList.add('hidden');
+    }
+}
+
+function renderToolsGrid() {
+    const grid = document.getElementById('chat-tools-grid');
+    const inner = document.getElementById('tools-grid-inner');
+    const arrowLeft = document.getElementById('tools-arrow-left');
+    const arrowRight = document.getElementById('tools-arrow-right');
+
+    if (!grid || !inner) return;
+
+    if (allTools.length === 0) {
+        grid.classList.add('hidden');
+        return;
+    }
+
+    grid.classList.remove('hidden');
+
+    const totalPages = Math.ceil(allTools.length / TOOLS_PER_PAGE);
+    const start = toolsPage * TOOLS_PER_PAGE;
+    const pageTools = allTools.slice(start, start + TOOLS_PER_PAGE);
+
+    let html = '';
+    for (let i = 0; i < TOOLS_PER_PAGE; i++) {
+        if (i < pageTools.length) {
+            const tool = pageTools[i];
+            html += `
+            <div class="tool-chip ${tool.type}" title="${tool.description}">
+                <span class="tool-chip-icon">${tool.icon}</span>
+                <span class="tool-chip-name">${tool.name}</span>
+                <span class="tool-chip-desc">${tool.description}</span>
+            </div>`;
+        } else {
+            html += '<div class="tool-chip-placeholder"></div>';
+        }
+    }
+    inner.innerHTML = html;
+
+    if (arrowLeft) arrowLeft.disabled = toolsPage === 0;
+    if (arrowRight) arrowRight.disabled = toolsPage >= totalPages - 1;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const arrowLeft = document.getElementById('tools-arrow-left');
+    const arrowRight = document.getElementById('tools-arrow-right');
+
+    if (arrowLeft) {
+        arrowLeft.addEventListener('click', () => {
+            if (toolsPage > 0) {
+                toolsPage--;
+                renderToolsGrid();
+            }
+        });
+    }
+
+    if (arrowRight) {
+        arrowRight.addEventListener('click', () => {
+            const totalPages = Math.ceil(allTools.length / TOOLS_PER_PAGE);
+            if (toolsPage < totalPages - 1) {
+                toolsPage++;
+                renderToolsGrid();
+            }
+        });
+    }
+});

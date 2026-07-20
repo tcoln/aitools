@@ -176,5 +176,9 @@ const api = {
         deleteConversation(id) {
             return api.request('DELETE', `/chat/conversations/${id}`);
         },
+
+        getTools() {
+            return api.request('GET', '/chat/tools');
+        },
     },
 };

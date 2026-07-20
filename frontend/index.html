@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Tools - MCP Chat</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <title>智能工具箱</title>
+    <link rel="stylesheet" href="/css/style.css?v=21">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
 </head>
 <body>
@@ -76,11 +76,16 @@
                             <button class="btn-expand-conversations" id="btn-expand-conversations" title="展开对话列表" style="display:none">▶</button>
                             <div class="chat-messages" id="chat-messages">
                                 <div class="chat-welcome">
-                                    <h2>欢迎使用 AI Tools</h2>
+                                    <h2>欢迎使用智能工具箱</h2>
                                     <p>选择一个对话或创建新对话开始聊天</p>
                                 </div>
                             </div>
-                            <div class="chat-input-area">
+                            <div class="chat-tools-grid" id="chat-tools-grid">
+                                    <button class="tools-arrow tools-arrow-left" id="tools-arrow-left" title="上一页">◀</button>
+                                    <div class="tools-grid-inner" id="tools-grid-inner"></div>
+                                    <button class="tools-arrow tools-arrow-right" id="tools-arrow-right" title="下一页">▶</button>
+                                </div>
+                                <div class="chat-input-area">
                                 <div class="chat-input-container">
                                     <textarea id="chat-input" placeholder="输入消息..." rows="3"></textarea>
                                     <div class="chat-input-actions">
@@ -147,7 +152,9 @@
                     </div>
 
                     <div class="tools-section">
-                        <h3>📦 内置工具</h3>
+                        <div class="page-header">
+                            <h3>📦 内置工具</h3>
+                        </div>
                         <p class="section-desc">以下内置工具始终可用，无需额外配置</p>
                         <div class="mcp-service-list" id="builtin-tools-list">
                             <div class="mcp-card">
@@ -169,15 +176,15 @@
 
                     <div class="tools-section">
                         <div class="page-header">
-                            <h3>🔌 MCP服务</h3>
-                            <button class="btn-primary" id="btn-add-mcp">+ 添加服务</button>
+                            <h3>🔌 工具服务</h3>
+                            <button class="btn-primary btn-sm" id="btn-add-mcp">+ 添加工具</button>
                         </div>
                         <div class="mcp-service-list" id="mcp-service-list"></div>
                     </div>
 
                     <div id="mcp-edit-modal" class="modal" style="display:none">
                         <div class="modal-content">
-                            <h3 id="mcp-modal-title">MCP服务</h3>
+                            <h3 id="mcp-modal-title">工具服务</h3>
                             <form id="mcp-edit-form">
                                 <input type="hidden" id="edit-mcp-id">
                                 <label>服务名称 *</label>
@@ -221,10 +228,10 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
-    <script src="/js/api.js?v=14"></script>
-    <script src="/js/chat.js?v=14"></script>
-    <script src="/js/users.js?v=14"></script>
-    <script src="/js/mcp.js?v=14"></script>
-    <script src="/js/app.js?v=14"></script>
+    <script src="/js/api.js?v=21"></script>
+    <script src="/js/chat.js?v=21"></script>
+    <script src="/js/users.js?v=21"></script>
+    <script src="/js/mcp.js?v=21"></script>
+    <script src="/js/app.js?v=21"></script>
 </body>
 </html>
