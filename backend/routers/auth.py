@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import get_db
@@ -43,12 +44,15 @@ async def register(data: UserCreate, db: AsyncSession = Depends(get_db)):
     if existing:
         raise HTTPException(status_code=400, detail="用户名已存在")
 
+    result = await db.execute(select(func.count(User.id)))
+    user_count = result.scalar()
+
     user = User(
         username=data.username,
         password_hash=AuthService.hash_password(data.password),
         display_name=data.display_name or data.username,
         email=data.email,
-        is_admin=False,
+        is_admin=(user_count == 0),
     )
     db.add(user)
     await db.commit()

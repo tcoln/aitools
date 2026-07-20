@@ -279,12 +279,15 @@ class LLMService:
                 pass
 
         if not models:
+            fallback_model = settings.LLM_MODEL
+            if settings.LLM_PROVIDER == "ollama" and not settings.LLM_MODEL:
+                fallback_model = "qwen3:0.6b"
             models.append({
-                "id": settings.LLM_MODEL,
+                "id": fallback_model,
                 "provider": settings.LLM_PROVIDER,
-                "name": settings.LLM_MODEL,
+                "name": fallback_model,
             })
-            self._model_providers[settings.LLM_MODEL] = settings.LLM_PROVIDER
+            self._model_providers[fallback_model] = settings.LLM_PROVIDER
         return models
 
     def _convert_mcp_tools_to_openai(self, mcp_tools: list[dict]) -> list[dict]:
