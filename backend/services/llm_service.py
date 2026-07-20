@@ -39,7 +39,7 @@ class LLMService:
             "Content-Type": "application/json",
         }
 
-        async with httpx.AsyncClient(timeout=120) as client:
+        async with httpx.AsyncClient(timeout=httpx.Timeout(connect=30.0, read=300.0, write=60.0, pool=30.0)) as client:
             async with client.stream("POST", url, json=body, headers=headers) as resp:
                 if resp.status_code != 200:
                     error_body = ""
@@ -72,7 +72,7 @@ class LLMService:
                 body["tool_choice"] = tool_choice
 
         logger.info(f"Ollama request: model={model}, tools={len(functions or [])}")
-        async with httpx.AsyncClient(timeout=120) as client:
+        async with httpx.AsyncClient(timeout=httpx.Timeout(connect=30.0, read=600.0, write=60.0, pool=30.0)) as client:
             async with client.stream("POST", url, json=body) as resp:
                 if resp.status_code != 200:
                     error_body = ""

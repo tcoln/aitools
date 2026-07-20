@@ -1,18 +1,41 @@
 import json
 import uuid
+import re
 import asyncio
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from fastapi.responses import StreamingResponse
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from database import get_db
+from database import get_db, async_session
 from schemas.chat import ChatRequest
 from models.user import User
 from models.chat_history import ChatHistory
 from models.mcp_service import MCPService
 from services.llm_service import llm_service
 from services.mcp_client import mcp_client_manager
+
+
+def _strip_file_content(content: str) -> str:
+    if not content:
+        return content
+    file_pattern = re.compile(r'\n\n\[文件:\s*[^\]]+\][\s\S]*?(?=\n\n\[|\Z)')
+    attach_pattern = re.compile(r'\n\n\[附件:\s*[^\]]+\]')
+    file_names = []
+    for m in file_pattern.finditer(content):
+        name_match = re.search(r'\[文件:\s*([^\]]+)\]', m.group())
+        if name_match:
+            file_names.append('📎 ' + name_match.group(1).strip())
+    for m in attach_pattern.finditer(content):
+        name_match = re.search(r'\[附件:\s*([^\]]+)\]', m.group())
+        if name_match:
+            file_names.append('📎 ' + name_match.group(1).strip())
+    cleaned = file_pattern.sub('', content)
+    cleaned = attach_pattern.sub('', cleaned)
+    cleaned = cleaned.strip()
+    if file_names:
+        cleaned = (cleaned + '\n' if cleaned else '') + '\n'.join(file_names)
+    return cleaned or content
 from services.builtin_tools import BUILTIN_TOOLS, BUILTIN_SERVICE_NAME, execute_builtin_tool
 from services.file_parser import parse_file
 from routers.auth import get_current_user
@@ -103,7 +126,7 @@ async def send_message(
         user_id=current_user.id,
         conversation_id=conversation_id,
         role="user",
-        content=req.message,
+        content=_strip_file_content(req.message),
     )
     db.add(user_msg)
     await db.commit()
@@ -181,27 +204,31 @@ async def send_message(
                     final_content += chunk
                     yield f"data: {json.dumps({'type': 'content', 'content': chunk})}\n\n"
 
-                assistant_msg = ChatHistory(
-                    user_id=current_user.id,
-                    conversation_id=conversation_id,
-                    role="assistant",
-                    content=final_content,
-                    tool_calls=json.dumps(tool_calls_collected, ensure_ascii=False),
-                )
-                db.add(assistant_msg)
-                await db.commit()
+                async with async_session() as gen_db:
+                    assistant_msg = ChatHistory(
+                        user_id=current_user.id,
+                        conversation_id=conversation_id,
+                        role="assistant",
+                        content=final_content,
+                        tool_calls=json.dumps(tool_calls_collected, ensure_ascii=False),
+                    )
+                    gen_db.add(assistant_msg)
+                    await gen_db.commit()
             else:
-                assistant_msg = ChatHistory(
-                    user_id=current_user.id,
-                    conversation_id=conversation_id,
-                    role="assistant",
-                    content=full_content,
-                )
-                db.add(assistant_msg)
-                await db.commit()
+                async with async_session() as gen_db:
+                    assistant_msg = ChatHistory(
+                        user_id=current_user.id,
+                        conversation_id=conversation_id,
+                        role="assistant",
+                        content=full_content,
+                    )
+                    gen_db.add(assistant_msg)
+                    await gen_db.commit()
 
             yield f"data: {json.dumps({'type': 'done', 'conversation_id': conversation_id})}\n\n"
         except Exception as e:
+            import traceback
+            traceback.print_exc()
             yield f"data: {json.dumps({'type': 'error', 'error': str(e)})}\n\n"
 
     return StreamingResponse(

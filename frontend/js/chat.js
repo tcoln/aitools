@@ -65,7 +65,7 @@ async function selectConversation(id) {
         } else {
             showToolsGrid();
         }
-        data.messages.forEach(msg => addMessage(msg.role, msg.content, msg.tool_calls));
+        data.messages.forEach(msg => addMessage(msg.role, stripFileContent(msg.content), msg.tool_calls));
         scrollToBottom();
     } catch (e) {
         chatMessages.innerHTML = '<div class="chat-welcome"><h2>加载失败</h2></div>';
@@ -218,6 +218,63 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+function stripFileContent(content) {
+    if (!content) return content;
+    let displayContent = content;
+    const fileNames = [];
+    const lines = content.split('\n');
+    let i = 0;
+    while (i < lines.length) {
+        const line = lines[i].trim();
+        const fileMatch = line.match(/^\[文件:\s*(.+?)\]$/);
+        const attachMatch = line.match(/^\[附件:\s*(.+?)\]$/);
+        if (fileMatch) {
+            const fileName = fileMatch[1].trim();
+            fileNames.push('📎 ' + fileName);
+            i++;
+            while (i < lines.length && lines[i].trim() && !lines[i].trim().startsWith('[')) {
+                i++;
+            }
+            continue;
+        }
+        if (attachMatch) {
+            fileNames.push('📎 ' + attachMatch[1].trim());
+            i++;
+            continue;
+        }
+        i++;
+    }
+    const cleanLines = [];
+    let skipUntilNextBlock = false;
+    for (let j = 0; j < lines.length; j++) {
+        const line = lines[j].trim();
+        if (line.match(/^\[文件:\s*(.+?)\]$/)) {
+            skipUntilNextBlock = true;
+            continue;
+        }
+        if (skipUntilNextBlock) {
+            if (line === '' || line.startsWith('[')) {
+                skipUntilNextBlock = false;
+                if (line.startsWith('[')) {
+                    j--;
+                    continue;
+                }
+            }
+            continue;
+        }
+        if (line.match(/^\[附件:\s*(.+?)\]$/)) {
+            continue;
+        }
+        cleanLines.push(lines[j]);
+    }
+    displayContent = cleanLines.join('\n').trim();
+    if (fileNames.length > 0) {
+        displayContent = (displayContent ? displayContent + '\n' : '') + fileNames.join('\n');
+    }
+    if (!displayContent) return content;
+    return displayContent;
 }
 
 async function handleFileSelect(e) {
