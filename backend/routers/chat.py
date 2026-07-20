@@ -1,7 +1,7 @@
 import json
 import uuid
 import asyncio
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from fastapi.responses import StreamingResponse
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,6 +14,7 @@ from models.mcp_service import MCPService
 from services.llm_service import llm_service
 from services.mcp_client import mcp_client_manager
 from services.builtin_tools import BUILTIN_TOOLS, BUILTIN_SERVICE_NAME, execute_builtin_tool
+from services.file_parser import parse_file
 from routers.auth import get_current_user
 
 router = APIRouter(prefix="/api/chat", tags=["chat"])
@@ -22,6 +23,24 @@ router = APIRouter(prefix="/api/chat", tags=["chat"])
 @router.get("/models")
 async def list_models(current_user: User = Depends(get_current_user)):
     return await llm_service.fetch_models()
+
+
+@router.post("/upload")
+async def upload_file(
+    file: UploadFile = File(...),
+    current_user: User = Depends(get_current_user),
+):
+    try:
+        content = await file.read()
+        parsed = parse_file(file.filename, content)
+        if parsed.startswith("["):
+            if "解析失败" in parsed or "未安装" in parsed or "不支持" in parsed or "无法解码" in parsed:
+                raise HTTPException(status_code=400, detail=parsed.strip("[]"))
+        return {"filename": file.filename, "content": parsed}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"文件解析失败: {e}")
 
 
 @router.post("/send")

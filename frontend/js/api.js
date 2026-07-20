@@ -143,6 +143,28 @@ const api = {
             return api.request('GET', '/chat/models');
         },
 
+        async uploadFile(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const headers = {};
+            if (api.token) {
+                headers['Authorization'] = `Bearer ${api.token}`;
+            }
+
+            const response = await fetch(API_BASE + '/chat/upload', {
+                method: 'POST',
+                headers,
+                body: formData,
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.detail || '上传失败');
+            }
+            return data;
+        },
+
         getConversations() {
             return api.request('GET', '/chat/conversations');
         },

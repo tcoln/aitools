@@ -62,11 +62,14 @@ class LLMService:
 
     async def _stream_ollama(
         self, model: str, messages: list[dict], functions: list[dict] | None,
+        tool_choice: str | None = None,
     ) -> AsyncGenerator[dict, None]:
         url = f"{settings.OLLAMA_API_BASE}/api/chat"
         body = {"model": model, "messages": messages, "stream": True}
         if functions:
             body["tools"] = functions
+            if tool_choice:
+                body["tool_choice"] = tool_choice
 
         logger.info(f"Ollama request: model={model}, tools={len(functions or [])}")
         async with httpx.AsyncClient(timeout=120) as client:
@@ -104,7 +107,7 @@ class LLMService:
         collected_tool_calls = []
 
         if self._is_ollama(model):
-            stream = self._stream_ollama(model, messages, functions)
+            stream = self._stream_ollama(model, messages, functions, "auto")
         else:
             stream = self._stream_openai(model, messages, functions, "auto")
 
@@ -224,9 +227,9 @@ class LLMService:
                                 tc["function"]["arguments"] = json.loads(args)
                             except json.JSONDecodeError:
                                 tc["function"]["arguments"] = {}
-            stream = self._stream_ollama(model, messages, functions)
+            stream = self._stream_ollama(model, messages, functions, "auto")
         else:
-            stream = self._stream_openai(model, messages, functions)
+            stream = self._stream_openai(model, messages, functions, "auto")
 
         async for data in stream:
             if "message" in data:

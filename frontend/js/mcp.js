@@ -137,7 +137,7 @@ async function testMCPConnection(serviceId) {
 function toggleMCPTransportFields() {
     const transport = document.getElementById('edit-mcp-transport').value;
     document.getElementById('mcp-stdio-fields').style.display = transport === 'stdio' ? 'block' : 'none';
-    document.getElementById('mcp-sse-fields').style.display = transport === 'sse' ? 'block' : 'none';
+    document.getElementById('mcp-sse-fields').style.display = (transport === 'sse' || transport === 'streamable-http') ? 'block' : 'none';
 }
 
 function initMCP() {

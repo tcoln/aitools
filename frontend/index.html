@@ -81,8 +81,15 @@
                                 </div>
                             </div>
                             <div class="chat-input-area">
-                                <textarea id="chat-input" placeholder="输入消息..." rows="1"></textarea>
-                                <button id="btn-send" class="btn-send">发送</button>
+                                <div class="chat-input-container">
+                                    <textarea id="chat-input" placeholder="输入消息..." rows="3"></textarea>
+                                    <div class="chat-input-actions">
+                                        <button class="btn-attach" id="btn-attach" title="上传附件">📎</button>
+                                        <input type="file" id="file-input" style="display:none" multiple>
+                                        <button id="btn-send" class="btn-send">发送</button>
+                                    </div>
+                                </div>
+                                <div class="attachments-preview" id="attachments-preview" style="display:none"></div>
                             </div>
                         </div>
                     </div>
@@ -181,6 +188,7 @@
                                 <select id="edit-mcp-transport">
                                     <option value="stdio">stdio</option>
                                     <option value="sse">sse</option>
+                                    <option value="streamable-http">streamable-http</option>
                                 </select>
                                 <div id="mcp-stdio-fields">
                                     <label>命令</label>
@@ -213,10 +221,10 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
-    <script src="/js/api.js?v=7"></script>
-    <script src="/js/chat.js?v=7"></script>
-    <script src="/js/users.js?v=7"></script>
-    <script src="/js/mcp.js?v=7"></script>
-    <script src="/js/app.js?v=7"></script>
+    <script src="/js/api.js?v=14"></script>
+    <script src="/js/chat.js?v=14"></script>
+    <script src="/js/users.js?v=14"></script>
+    <script src="/js/mcp.js?v=14"></script>
+    <script src="/js/app.js?v=14"></script>
 </body>
 </html>

@@ -17,8 +17,8 @@ class MCPClientManager:
         transport = service_config.get("transport_type", "stdio")
         if transport == "stdio":
             return await self._get_stdio_tools(service_config)
-        elif transport == "sse":
-            return await self._get_sse_tools(service_config)
+        elif transport in ("sse", "streamable-http"):
+            return await self._get_http_tools(service_config)
         else:
             return []
 
@@ -26,8 +26,8 @@ class MCPClientManager:
         transport = service_config.get("transport_type", "stdio")
         if transport == "stdio":
             return await self._call_stdio_tool(service_config, tool_name, arguments)
-        elif transport == "sse":
-            return await self._call_sse_tool(service_config, tool_name, arguments)
+        elif transport in ("sse", "streamable-http"):
+            return await self._call_http_tool(service_config, tool_name, arguments)
         else:
             raise ValueError(f"Unsupported transport type: {transport}")
 
@@ -129,39 +129,62 @@ class MCPClientManager:
         except Exception as e:
             return {"error": str(e)}
 
-    async def _get_sse_tools(self, config: dict) -> list[dict]:
+    async def _get_http_tools(self, config: dict) -> list[dict]:
         try:
             url = config.get("url", "")
             if not url:
                 return []
+            headers = {
+                "Content-Type": "application/json",
+                "Accept": "application/json, text/event-stream",
+            }
+            if config.get("headers"):
+                headers.update(json.loads(config["headers"]))
+
             async with httpx.AsyncClient(timeout=30) as client:
-                headers = {}
-                if config.get("headers"):
-                    headers = json.loads(config["headers"])
+                session_id = await self._init_http_session(client, url, headers)
+                if session_id:
+                    headers["Mcp-Session-Id"] = session_id
+
                 resp = await client.post(
-                    f"{url}/tools/list",
+                    url,
                     json={"jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": {}},
                     headers=headers,
                 )
-                data = resp.json()
+                if resp.status_code != 200:
+                    print(f"MCP HTTP error: {resp.status_code} {resp.text[:200]}")
+                    return []
+                data = self._parse_sse_json(resp.text)
+                if not data:
+                    return []
                 if "result" in data and "tools" in data["result"]:
                     return data["result"]["tools"]
+                if "error" in data:
+                    print(f"MCP JSON-RPC error: {data['error']}")
                 return []
         except Exception as e:
-            print(f"Error getting SSE tools: {e}")
+            print(f"Error getting HTTP tools: {e}")
             return []
 
-    async def _call_sse_tool(self, config: dict, tool_name: str, arguments: dict) -> Any:
+    async def _call_http_tool(self, config: dict, tool_name: str, arguments: dict) -> Any:
         try:
             url = config.get("url", "")
             if not url:
                 return {"error": "No URL configured"}
+            headers = {
+                "Content-Type": "application/json",
+                "Accept": "application/json, text/event-stream",
+            }
+            if config.get("headers"):
+                headers.update(json.loads(config["headers"]))
+
             async with httpx.AsyncClient(timeout=60) as client:
-                headers = {}
-                if config.get("headers"):
-                    headers = json.loads(config["headers"])
+                session_id = await self._init_http_session(client, url, headers)
+                if session_id:
+                    headers["Mcp-Session-Id"] = session_id
+
                 resp = await client.post(
-                    f"{url}/tools/call",
+                    url,
                     json={
                         "jsonrpc": "2.0",
                         "id": 2,
@@ -170,9 +193,49 @@ class MCPClientManager:
                     },
                     headers=headers,
                 )
-                return resp.json()
+                data = self._parse_sse_json(resp.text)
+                if not data:
+                    return {"error": "No valid response from MCP server"}
+                if "result" in data:
+                    return data["result"]
+                if "error" in data:
+                    return {"error": data["error"]}
+                return {"error": "No valid response from MCP server"}
         except Exception as e:
             return {"error": str(e)}
+
+    def _parse_sse_json(self, text: str) -> dict | None:
+        for line in text.strip().split("\n"):
+            if line.startswith("data: "):
+                try:
+                    return json.loads(line[6:])
+                except json.JSONDecodeError:
+                    continue
+        return None
+
+    async def _init_http_session(self, client: httpx.AsyncClient, url: str, headers: dict) -> str | None:
+        try:
+            resp = await client.post(
+                url,
+                json={
+                    "jsonrpc": "2.0",
+                    "id": 0,
+                    "method": "initialize",
+                    "params": {
+                        "protocolVersion": "2024-11-05",
+                        "capabilities": {},
+                        "clientInfo": {"name": "ai-tools", "version": "1.0.0"},
+                    },
+                },
+                headers=headers,
+            )
+            session_id = resp.headers.get("Mcp-Session-Id")
+            if session_id:
+                return session_id
+            return None
+        except Exception as e:
+            print(f"Error initializing MCP session: {e}")
+            return None
 
 
 mcp_client_manager = MCPClientManager()

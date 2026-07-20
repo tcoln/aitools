@@ -620,29 +620,57 @@ body {
 }
 
 .chat-input-area {
-    padding: 16px 20px;
+    padding: 20px 24px;
     border-top: 1px solid var(--border);
     background: var(--bg-card);
+}
+
+.chat-input-container {
     display: flex;
     gap: 10px;
     align-items: flex-end;
 }
 
+.chat-input-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
 #chat-input {
     flex: 1;
-    padding: 10px 14px;
+    padding: 14px 18px;
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    font-size: 14px;
+    font-size: 15px;
     resize: none;
     outline: none;
-    max-height: 120px;
+    max-height: 200px;
+    min-height: 80px;
     font-family: inherit;
+    line-height: 1.5;
 }
 
 #chat-input:focus {
     border-color: var(--primary);
     box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.btn-attach {
+    padding: 8px 10px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s;
+    line-height: 1;
+}
+
+.btn-attach:hover {
+    background: var(--primary-light);
+    border-color: var(--primary);
 }
 
 .btn-send {
@@ -664,6 +692,41 @@ body {
 .btn-send:disabled {
     background: #94a3b8;
     cursor: not-allowed;
+}
+
+.attachments-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.attachment-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: var(--primary-light);
+    border: 1px solid var(--primary);
+    border-radius: 20px;
+    font-size: 12px;
+    color: var(--primary);
+}
+
+.attachment-chip .remove-attach {
+    background: none;
+    border: none;
+    color: var(--danger);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0 2px;
+    line-height: 1;
+}
+
+.attachment-error {
+    background: #fef2f2;
+    border-color: var(--danger);
+    color: var(--danger);
 }
 
 .page-header {
