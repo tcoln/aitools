@@ -14,6 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initUsers();
     initMCP();
     initNavigation();
+    initSidebarToggle();
+    initConversationToggle();
 
     if (api.token) {
         checkAuth();
@@ -157,4 +159,46 @@ function navigateTo(page) {
     if (page === 'users') loadUsers();
     if (page === 'tools') loadMCPServices();
     if (page === 'chat') loadConversations();
+}
+
+function initSidebarToggle() {
+    const sidebar = document.querySelector('.sidebar');
+    const toggle = document.getElementById('sidebar-toggle');
+
+    toggle.addEventListener('click', () => {
+        sidebar.classList.toggle('collapsed');
+        const isCollapsed = sidebar.classList.contains('collapsed');
+        toggle.querySelector('span').style.display = isCollapsed ? 'none' : 'inline';
+        toggle.title = isCollapsed ? '点击展开侧边栏' : '点击收缩侧边栏';
+    });
+}
+
+function initConversationToggle() {
+    const chatContainer = document.querySelector('.chat-container');
+    const toggleBtn = document.getElementById('btn-toggle-conversations');
+    const expandBtn = document.getElementById('btn-expand-conversations');
+    let isCollapsed = false;
+
+    function collapse() {
+        isCollapsed = true;
+        chatContainer.classList.add('collapsed-conversations');
+        toggleBtn.textContent = '▶';
+        toggleBtn.title = '展开对话列表';
+        expandBtn.style.display = 'block';
+    }
+
+    function expand() {
+        isCollapsed = false;
+        chatContainer.classList.remove('collapsed-conversations');
+        toggleBtn.textContent = '◀';
+        toggleBtn.title = '收缩对话列表';
+        expandBtn.style.display = 'none';
+    }
+
+    toggleBtn.addEventListener('click', () => {
+        if (isCollapsed) expand();
+        else collapse();
+    });
+
+    expandBtn.addEventListener('click', expand);
 }

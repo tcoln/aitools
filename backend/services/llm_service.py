@@ -68,6 +68,7 @@ class LLMService:
         if functions:
             body["tools"] = functions
 
+        logger.info(f"Ollama request: model={model}, tools={len(functions or [])}")
         async with httpx.AsyncClient(timeout=120) as client:
             async with client.stream("POST", url, json=body) as resp:
                 if resp.status_code != 200:
@@ -116,11 +117,18 @@ class LLMService:
                 if "tool_calls" in msg:
                     for tc in msg["tool_calls"]:
                         func = tc.get("function", {})
+                        args = func.get("arguments", {})
+                        if isinstance(args, dict):
+                            args_str = json.dumps(args, ensure_ascii=False)
+                        elif isinstance(args, str):
+                            args_str = args
+                        else:
+                            args_str = "{}"
                         collected_tool_calls.append({
                             "id": tc.get("id", ""),
                             "function": {
                                 "name": func.get("name", ""),
-                                "arguments": json.dumps(func.get("arguments", {})) if isinstance(func.get("arguments"), dict) else func.get("arguments", "{}"),
+                                "arguments": args_str,
                             }
                         })
             elif "choices" in data:
@@ -207,6 +215,15 @@ class LLMService:
         functions = self._convert_mcp_tools_to_openai(mcp_tools) if mcp_tools else None
 
         if self._is_ollama(model):
+            for msg in messages:
+                if msg.get("role") == "assistant" and "tool_calls" in msg:
+                    for tc in msg["tool_calls"]:
+                        args = tc["function"].get("arguments")
+                        if isinstance(args, str):
+                            try:
+                                tc["function"]["arguments"] = json.loads(args)
+                            except json.JSONDecodeError:
+                                tc["function"]["arguments"] = {}
             stream = self._stream_ollama(model, messages, functions)
         else:
             stream = self._stream_openai(model, messages, functions)
