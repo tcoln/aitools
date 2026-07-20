@@ -60,6 +60,11 @@ async function selectConversation(id) {
     try {
         const data = await api.chat.getConversation(id);
         chatMessages.innerHTML = '';
+        if (data.messages.length > 0) {
+            hideToolsGrid();
+        } else {
+            showToolsGrid();
+        }
         data.messages.forEach(msg => addMessage(msg.role, msg.content, msg.tool_calls));
         scrollToBottom();
     } catch (e) {
@@ -74,7 +79,8 @@ async function deleteConversation(id) {
         await api.chat.deleteConversation(id);
         if (currentConversationId === id) {
             currentConversationId = null;
-            chatMessages.innerHTML = '<div class="chat-welcome"><h2>欢迎使用 AI Tools</h2><p>选择一个对话或创建新对话开始聊天</p></div>';
+            chatMessages.innerHTML = '<div class="chat-welcome"><h2>欢迎使用AI工具箱</h2><p>选择一个对话或创建新对话开始聊天</p></div>';
+            showToolsGrid();
         }
         loadConversations();
     } catch (e) {
@@ -84,7 +90,8 @@ async function deleteConversation(id) {
 
 function newChat() {
     currentConversationId = null;
-    chatMessages.innerHTML = '<div class="chat-welcome"><h2>欢迎使用 AI Tools</h2><p>选择一个对话或创建新对话开始聊天</p></div>';
+    chatMessages.innerHTML = '<div class="chat-welcome"><h2>欢迎使用AI工具箱</h2><p>选择一个对话或创建新对话开始聊天</p></div>';
+    showToolsGrid();
     loadConversations();
 }
 
@@ -120,6 +127,8 @@ async function sendMessage() {
     if (chatMessages.querySelector('.chat-welcome')) {
         chatMessages.innerHTML = '';
     }
+
+    hideToolsGrid();
 
     addMessage('user', displayMessage);
 
@@ -289,6 +298,23 @@ function renderAttachments() {
 let allTools = [];
 let toolsPage = 0;
 const TOOLS_PER_PAGE = 3;
+let toolsGridShouldHide = false;
+
+function hideToolsGrid() {
+    toolsGridShouldHide = true;
+    const grid = document.getElementById('chat-tools-grid');
+    if (grid) {
+        grid.style.setProperty('display', 'none', 'important');
+    }
+}
+
+function showToolsGrid() {
+    toolsGridShouldHide = false;
+    const grid = document.getElementById('chat-tools-grid');
+    if (grid && allTools.length > 0) {
+        grid.style.setProperty('display', 'flex', 'important');
+    }
+}
 
 async function loadChatTools() {
     try {
@@ -299,7 +325,7 @@ async function loadChatTools() {
     } catch (err) {
         console.error('加载工具列表失败:', err);
         const grid = document.getElementById('chat-tools-grid');
-        if (grid) grid.classList.add('hidden');
+        if (grid) grid.style.setProperty('display', 'none', 'important');
     }
 }
 
@@ -312,11 +338,16 @@ function renderToolsGrid() {
     if (!grid || !inner) return;
 
     if (allTools.length === 0) {
-        grid.classList.add('hidden');
+        grid.style.setProperty('display', 'none', 'important');
         return;
     }
 
-    grid.classList.remove('hidden');
+    if (toolsGridShouldHide) {
+        grid.style.setProperty('display', 'none', 'important');
+        return;
+    }
+
+    grid.style.setProperty('display', 'flex', 'important');
 
     const totalPages = Math.ceil(allTools.length / TOOLS_PER_PAGE);
     const start = toolsPage * TOOLS_PER_PAGE;
