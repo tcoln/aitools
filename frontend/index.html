@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Tools - MCP Chat</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+</head>
+<body>
+    <div id="app">
+        <div id="login-page" class="page">
+            <div class="login-container">
+                <h1>AI Tools</h1>
+                <p class="subtitle">大模型对话 & MCP服务管理</p>
+                <div class="login-tabs">
+                    <button class="tab-btn active" data-tab="login">登录</button>
+                    <button class="tab-btn" data-tab="register">注册</button>
+                </div>
+                <form id="login-form" class="auth-form active">
+                    <input type="text" id="login-username" placeholder="用户名" required>
+                    <input type="password" id="login-password" placeholder="密码" required>
+                    <button type="submit" class="btn-primary">登录</button>
+                </form>
+                <form id="register-form" class="auth-form">
+                    <input type="text" id="register-username" placeholder="用户名" required>
+                    <input type="password" id="register-password" placeholder="密码" required>
+                    <input type="text" id="register-display-name" placeholder="显示名称（可选）">
+                    <input type="email" id="register-email" placeholder="邮箱（可选）">
+                    <button type="submit" class="btn-primary">注册</button>
+                </form>
+                <div id="auth-error" class="error-message"></div>
+            </div>
+        </div>
+
+        <div id="main-page" class="page" style="display:none">
+            <nav class="sidebar">
+                <div class="sidebar-header">
+                    <h2>AI Tools</h2>
+                    <div class="model-selector">
+                        <select id="model-select">
+                            <option value="">加载中...</option>
+                        </select>
+                    </div>
+                    <div class="user-info">
+                        <span id="current-username"></span>
+                        <span id="admin-badge" class="badge badge-admin" style="display:none">管理员</span>
+                    </div>
+                </div>
+                <div class="sidebar-nav">
+                    <button class="nav-btn active" data-page="chat">💬 对话</button>
+                    <button class="nav-btn" data-page="users" id="nav-users" style="display:none">👥 用户管理</button>
+                    <button class="nav-btn" data-page="mcp" id="nav-mcp" style="display:none">🔧 MCP服务</button>
+                </div>
+                <div class="sidebar-footer">
+                    <button class="btn-logout" id="btn-logout">退出登录</button>
+                </div>
+            </nav>
+
+            <main class="content">
+                <div id="page-chat" class="page-content active">
+                    <div class="chat-container">
+                        <div class="chat-sidebar">
+                            <div class="chat-sidebar-header">
+                                <h3>对话列表</h3>
+                                <button class="btn-new-chat" id="btn-new-chat">+ 新对话</button>
+                            </div>
+                            <div class="conversation-list" id="conversation-list"></div>
+                        </div>
+                        <div class="chat-main">
+                            <div class="chat-messages" id="chat-messages">
+                                <div class="chat-welcome">
+                                    <h2>欢迎使用 AI Tools</h2>
+                                    <p>选择一个对话或创建新对话开始聊天</p>
+                                </div>
+                            </div>
+                            <div class="chat-input-area">
+                                <textarea id="chat-input" placeholder="输入消息..." rows="1"></textarea>
+                                <button id="btn-send" class="btn-send">发送</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="page-users" class="page-content">
+                    <div class="page-header">
+                        <h2>用户管理</h2>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>用户名</th>
+                                    <th>显示名称</th>
+                                    <th>邮箱</th>
+                                    <th>角色</th>
+                                    <th>状态</th>
+                                    <th>创建时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-body"></tbody>
+                        </table>
+                    </div>
+                    <div id="user-edit-modal" class="modal" style="display:none">
+                        <div class="modal-content">
+                            <h3 id="user-modal-title">编辑用户</h3>
+                            <form id="user-edit-form">
+                                <input type="hidden" id="edit-user-id">
+                                <label>显示名称</label>
+                                <input type="text" id="edit-display-name">
+                                <label>邮箱</label>
+                                <input type="email" id="edit-email">
+                                <label>新密码（留空不修改）</label>
+                                <input type="password" id="edit-password">
+                                <label>
+                                    <input type="checkbox" id="edit-is-admin"> 管理员
+                                </label>
+                                <label>
+                                    <input type="checkbox" id="edit-is-active" checked> 启用
+                                </label>
+                                <div class="modal-actions">
+                                    <button type="submit" class="btn-primary">保存</button>
+                                    <button type="button" class="btn-secondary modal-close">取消</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="page-mcp" class="page-content">
+                    <div class="page-header">
+                        <h2>MCP服务管理</h2>
+                        <button class="btn-primary" id="btn-add-mcp">+ 添加服务</button>
+                    </div>
+                    <div class="mcp-service-list" id="mcp-service-list"></div>
+
+                    <div id="mcp-edit-modal" class="modal" style="display:none">
+                        <div class="modal-content">
+                            <h3 id="mcp-modal-title">MCP服务</h3>
+                            <form id="mcp-edit-form">
+                                <input type="hidden" id="edit-mcp-id">
+                                <label>服务名称 *</label>
+                                <input type="text" id="edit-mcp-name" required>
+                                <label>描述</label>
+                                <textarea id="edit-mcp-description" rows="2"></textarea>
+                                <label>传输类型</label>
+                                <select id="edit-mcp-transport">
+                                    <option value="stdio">stdio</option>
+                                    <option value="sse">sse</option>
+                                </select>
+                                <div id="mcp-stdio-fields">
+                                    <label>命令</label>
+                                    <input type="text" id="edit-mcp-command">
+                                    <label>参数 (JSON数组)</label>
+                                    <input type="text" id="edit-mcp-args" placeholder='["arg1", "arg2"]'>
+                                    <label>环境变量 (JSON对象)</label>
+                                    <input type="text" id="edit-mcp-env-vars" placeholder='{"KEY": "VALUE"}'>
+                                </div>
+                                <div id="mcp-sse-fields" style="display:none">
+                                    <label>URL</label>
+                                    <input type="text" id="edit-mcp-url">
+                                    <label>Headers (JSON对象)</label>
+                                    <input type="text" id="edit-mcp-headers" placeholder='{"Authorization": "Bearer xxx"}'>
+                                </div>
+                                <label>
+                                    <input type="checkbox" id="edit-mcp-is-active" checked> 启用
+                                </label>
+                                <div class="modal-actions">
+                                    <button type="submit" class="btn-primary">保存</button>
+                                    <button type="button" class="btn-secondary modal-close">取消</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+    <script src="/js/api.js?v=4"></script>
+    <script src="/js/chat.js?v=4"></script>
+    <script src="/js/users.js?v=4"></script>
+    <script src="/js/mcp.js?v=4"></script>
+    <script src="/js/app.js?v=4"></script>
+</body>
+</html>
