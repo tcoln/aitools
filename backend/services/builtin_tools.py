@@ -1,5 +1,7 @@
 import httpx
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
+
+BEIJING_TZ = timezone(timedelta(hours=8))
 
 BUILTIN_TOOLS = [
     {
@@ -44,7 +46,7 @@ async def execute_builtin_tool(tool_name: str, arguments: dict) -> dict:
 
 
 async def _get_current_date(args: dict) -> dict:
-    now = datetime.now()
+    now = datetime.now(BEIJING_TZ)
     weekdays = ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"]
     return {
         "date": now.strftime("%Y-%m-%d"),

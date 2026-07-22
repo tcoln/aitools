@@ -65,7 +65,7 @@ async function selectConversation(id) {
         } else {
             showToolsGrid();
         }
-        data.messages.forEach(msg => addMessage(msg.role, stripFileContent(msg.content), msg.tool_calls));
+        data.messages.forEach(msg => addMessage(msg.role, stripFileContent(msg.content), msg.tool_calls, false, msg.created_at));
         scrollToBottom();
     } catch (e) {
         chatMessages.innerHTML = '<div class="chat-welcome"><h2>加载失败</h2></div>';
@@ -192,14 +192,31 @@ async function sendMessage() {
     chatInput.focus();
 }
 
-function addMessage(role, content, toolCalls, isStreaming = false) {
+function formatTime(isoString) {
+    if (!isoString) return '';
+    const date = new Date(isoString);
+    const bjOpts = { timeZone: 'Asia/Shanghai' };
+    const time = date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', ...bjOpts });
+    const bjDate = date.toLocaleDateString('zh-CN', bjOpts);
+    const bjNow = new Date().toLocaleDateString('zh-CN', bjOpts);
+    if (bjDate === bjNow) {
+        return time;
+    }
+    const parts = bjDate.split('/');
+    return `${parseInt(parts[1])}/${parseInt(parts[2])} ${time}`;
+}
+
+function addMessage(role, content, toolCalls, isStreaming = false, createdAt = null) {
     const div = document.createElement('div');
     div.className = `message ${role}`;
 
+    const timestamp = createdAt || new Date().toISOString();
+    const timeHtml = `<div class="message-time">${formatTime(timestamp)}</div>`;
+
     if (role === 'user') {
-        div.innerHTML = `<div class="message-content">${escapeHtml(content)}</div>`;
+        div.innerHTML = `${timeHtml}<div class="message-content">${escapeHtml(content)}</div>`;
     } else {
-        div.innerHTML = `<div class="message-content">${isStreaming ? '<div class="typing-indicator"><span></span><span></span><span></span></div>' : marked.parse(content)}</div>`;
+        div.innerHTML = `${timeHtml}<div class="message-content">${isStreaming ? '<div class="typing-indicator"><span></span><span></span><span></span></div>' : marked.parse(content)}</div>`;
     }
 
     chatMessages.appendChild(div);

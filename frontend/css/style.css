@@ -577,6 +577,19 @@ body {
     padding: 10px 16px;
 }
 
+.message-time {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+    margin-left: 4px;
+}
+
+.message.user .message-time {
+    text-align: right;
+    margin-right: 4px;
+    margin-left: 0;
+}
+
 .message-content p {
     margin-bottom: 8px;
 }

@@ -1,8 +1,14 @@
 import uuid
-from datetime import datetime
-from sqlalchemy import String, Boolean, DateTime, func
+from datetime import datetime, timezone, timedelta
+from sqlalchemy import String, Boolean, DateTime
 from sqlalchemy.orm import Mapped, mapped_column
 from database import Base
+
+BEIJING_TZ = timezone(timedelta(hours=8))
+
+
+def _beijing_now() -> datetime:
+    return datetime.now(BEIJING_TZ)
 
 
 class User(Base):
@@ -15,5 +21,5 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(200), nullable=True)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_beijing_now)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_beijing_now, onupdate=_beijing_now)

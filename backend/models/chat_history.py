@@ -1,8 +1,14 @@
 import uuid
-from datetime import datetime
-from sqlalchemy import String, Text, DateTime, ForeignKey, func
+from datetime import datetime, timezone, timedelta
+from sqlalchemy import String, Text, DateTime, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 from database import Base
+
+BEIJING_TZ = timezone(timedelta(hours=8))
+
+
+def _beijing_now() -> datetime:
+    return datetime.now(BEIJING_TZ)
 
 
 class ChatHistory(Base):
@@ -14,4 +20,4 @@ class ChatHistory(Base):
     role: Mapped[str] = mapped_column(String(20), nullable=False)
     content: Mapped[str] = mapped_column(Text, nullable=False)
     tool_calls: Mapped[str] = mapped_column(Text, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_beijing_now)
