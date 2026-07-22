@@ -1,3 +1,7 @@
+# Author: glt
+# Email: guolintan@qq.com
+# Created: 2026-07-22
+
 import httpx
 from datetime import datetime, timezone, timedelta
 
@@ -36,6 +40,7 @@ BUILTIN_TOOLS = [
 BUILTIN_SERVICE_NAME = "_builtin"
 
 
+# 执行内置工具：根据工具名称分发到对应的处理函数
 async def execute_builtin_tool(tool_name: str, arguments: dict) -> dict:
     if tool_name == "get_current_date":
         return await _get_current_date(arguments)
@@ -45,6 +50,7 @@ async def execute_builtin_tool(tool_name: str, arguments: dict) -> dict:
         return {"error": f"未知的内置工具: {tool_name}"}
 
 
+# 获取当前北京时间，包括日期、时间、星期和ISO时间戳
 async def _get_current_date(args: dict) -> dict:
     now = datetime.now(BEIJING_TZ)
     weekdays = ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"]
@@ -56,6 +62,7 @@ async def _get_current_date(args: dict) -> dict:
     }
 
 
+# 通过wttr.in查询指定城市的天气信息
 async def _get_weather(args: dict) -> dict:
     city = args.get("city", "北京")
     try:

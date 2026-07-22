@@ -1,3 +1,7 @@
+# Author: glt
+# Email: guolintan@qq.com
+# Created: 2026-07-22
+
 from .user import UserCreate, UserUpdate, UserResponse, UserLogin, Token
 from .mcp_service import MCPServiceCreate, MCPServiceUpdate, MCPServiceResponse
 from .chat import ChatRequest, ChatResponse, ConversationResponse

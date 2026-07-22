@@ -1,3 +1,7 @@
+# Author: glt
+# Email: guolintan@qq.com
+# Created: 2026-07-22
+
 import json
 import uuid
 import re
@@ -16,6 +20,7 @@ from services.llm_service import llm_service
 from services.mcp_client import mcp_client_manager
 
 
+# 去除消息中的文件内容，保留文件名标记
 def _strip_file_content(content: str) -> str:
     if not content:
         return content
@@ -43,11 +48,13 @@ from routers.auth import get_current_user
 router = APIRouter(prefix="/api/chat", tags=["chat"])
 
 
+# 获取当前可用的LLM模型列表
 @router.get("/models")
 async def list_models(current_user: User = Depends(get_current_user)):
     return await llm_service.fetch_models()
 
 
+# 上传并解析文件，支持xlsx、docx、txt等格式
 @router.post("/upload")
 async def upload_file(
     file: UploadFile = File(...),
@@ -66,6 +73,7 @@ async def upload_file(
         raise HTTPException(status_code=400, detail=f"文件解析失败: {e}")
 
 
+# 发送聊天消息（SSE流式响应），支持工具调用和多轮对话
 @router.post("/send")
 async def send_message(
     req: ChatRequest,
@@ -131,6 +139,7 @@ async def send_message(
     db.add(user_msg)
     await db.commit()
 
+    # SSE流式生成器：处理LLM对话、工具调用和结果回传
     async def generate():
         messages = history + [{"role": "user", "content": req.message}]
         full_content = ""
@@ -242,6 +251,7 @@ async def send_message(
     )
 
 
+# 获取聊天页面可用的工具列表（内置工具 + MCP工具）
 @router.get("/tools")
 async def list_chat_tools(
     current_user: User = Depends(get_current_user),
@@ -273,6 +283,7 @@ async def list_chat_tools(
     return tools
 
 
+# 获取当前用户的对话列表，按时间倒序
 @router.get("/conversations")
 async def list_conversations(
     current_user: User = Depends(get_current_user),
@@ -308,6 +319,7 @@ async def list_conversations(
     return conversations
 
 
+# 获取指定对话的所有消息记录
 @router.get("/conversations/{conversation_id}")
 async def get_conversation(
     conversation_id: str,
@@ -338,6 +350,7 @@ async def get_conversation(
     }
 
 
+# 删除指定对话及其所有消息
 @router.delete("/conversations/{conversation_id}")
 async def delete_conversation(
     conversation_id: str,

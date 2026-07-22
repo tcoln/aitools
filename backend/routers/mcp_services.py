@@ -1,3 +1,7 @@
+# Author: glt
+# Email: guolintan@qq.com
+# Created: 2026-07-22
+
 import json
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import select
@@ -13,6 +17,7 @@ from routers.auth import get_current_user, require_admin
 router = APIRouter(prefix="/api/mcp-services", tags=["mcp_services"])
 
 
+# 获取所有MCP服务列表
 @router.get("/", response_model=list[MCPServiceResponse])
 async def list_services(
     current_user: User = Depends(get_current_user),
@@ -25,6 +30,7 @@ async def list_services(
     return [MCPServiceResponse.model_validate(s) for s in services]
 
 
+# 根据ID获取单个MCP服务详情
 @router.get("/{service_id}", response_model=MCPServiceResponse)
 async def get_service(
     service_id: str,
@@ -38,6 +44,7 @@ async def get_service(
     return MCPServiceResponse.model_validate(service)
 
 
+# 管理员：创建新的MCP服务
 @router.post("/", response_model=MCPServiceResponse, status_code=status.HTTP_201_CREATED)
 async def create_service(
     data: MCPServiceCreate,
@@ -67,6 +74,7 @@ async def create_service(
     return MCPServiceResponse.model_validate(service)
 
 
+# 管理员：更新MCP服务配置
 @router.put("/{service_id}", response_model=MCPServiceResponse)
 async def update_service(
     service_id: str,
@@ -88,6 +96,7 @@ async def update_service(
     return MCPServiceResponse.model_validate(service)
 
 
+# 管理员：删除MCP服务
 @router.delete("/{service_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_service(
     service_id: str,
@@ -103,6 +112,7 @@ async def delete_service(
     await db.commit()
 
 
+# 管理员：测试MCP服务连通性，返回可用工具列表
 @router.post("/{service_id}/test")
 async def test_service(
     service_id: str,

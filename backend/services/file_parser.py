@@ -1,3 +1,7 @@
+# Author: glt
+# Email: guolintan@qq.com
+# Created: 2026-07-22
+
 import io
 import logging
 
@@ -34,6 +38,7 @@ TEXT_EXTENSIONS = {
 }
 
 
+# 根据文件扩展名解析文件内容，支持xlsx、docx、文本等格式
 def parse_file(filename: str, content: bytes) -> str:
     ext = filename.lower()
     for e in (".xlsx", ".xlsm", ".xltx", ".xltm"):
@@ -51,6 +56,7 @@ def parse_file(filename: str, content: bytes) -> str:
     return f"[不支持解析此文件格式: {filename}]"
 
 
+# 解析Excel(.xlsx)文件内容
 def _parse_xlsx(content: bytes) -> str:
     if not HAS_OPENPYXL:
         return "[Excel 解析失败: openpyxl 未安装，请运行 pip install openpyxl]"
@@ -72,6 +78,7 @@ def _parse_xlsx(content: bytes) -> str:
         return f"[Excel 解析失败: {e}]"
 
 
+# 解析Word(.docx)文件内容
 def _parse_docx(content: bytes) -> str:
     if not HAS_DOCX:
         return "[Word 解析失败: python-docx 未安装，请运行 pip install python-docx]"
@@ -95,6 +102,7 @@ def _parse_docx(content: bytes) -> str:
         return f"[Word 文档解析失败: {e}]"
 
 
+# 解析文本文件内容，支持UTF-8和GBK编码
 def _parse_text(content: bytes) -> str:
     try:
         return content.decode("utf-8")

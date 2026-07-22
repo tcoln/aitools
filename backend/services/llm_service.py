@@ -1,3 +1,7 @@
+# Author: glt
+# Email: guolintan@qq.com
+# Created: 2026-07-22
+
 import json
 import logging
 from typing import AsyncGenerator
@@ -9,11 +13,14 @@ from services.mcp_client import mcp_client_manager
 logger = logging.getLogger(__name__)
 
 
+# LLM服务：统一管理OpenAI和Ollama的对话、工具调用、模型查询
 class LLMService:
 
+    # 初始化LLM服务，创建模型提供商缓存字典
     def __init__(self):
         self._model_providers: dict[str, str] = {}
 
+    # 判断当前模型是否为Ollama提供
     def _is_ollama(self, model: str | None = None) -> bool:
         if settings.LLM_PROVIDER == "ollama":
             return True
@@ -23,6 +30,7 @@ class LLMService:
             return self._model_providers[model] == "ollama"
         return False
 
+    # 流式调用OpenAI兼容API
     async def _stream_openai(
         self, model: str, messages: list[dict], functions: list[dict] | None,
         tool_choice: str | None = None,
@@ -60,6 +68,7 @@ class LLMService:
                     except json.JSONDecodeError:
                         continue
 
+    # 流式调用Ollama API
     async def _stream_ollama(
         self, model: str, messages: list[dict], functions: list[dict] | None,
         tool_choice: str | None = None,
@@ -91,6 +100,7 @@ class LLMService:
                     except json.JSONDecodeError:
                         continue
 
+    # 第一轮LLM对话：发送用户消息，LLM决定是否调用工具
     async def chat(
         self,
         message: str,
@@ -160,6 +170,7 @@ class LLMService:
         elif not collected_content:
             raise Exception("LLM 未返回任何内容，请检查模型是否正确或 API 是否可用")
 
+    # 执行工具调用：遍历tool_calls，通过MCP客户端执行对应的工具
     async def execute_tool_calls(
         self,
         tool_calls: list[dict],
@@ -208,6 +219,7 @@ class LLMService:
 
         yield {"type": "tool_results_complete", "results": results}
 
+    # 第二轮LLM对话：将工具执行结果送回LLM，生成最终文本回复
     async def chat_with_tool_results(
         self,
         messages: list[dict],
@@ -241,6 +253,7 @@ class LLMService:
                 if "content" in delta and delta["content"]:
                     yield delta["content"]
 
+    # 从Ollama和OpenAI获取可用模型列表
     async def fetch_models(self) -> list[dict]:
         models = []
         self._model_providers = {}
@@ -293,6 +306,7 @@ class LLMService:
             self._model_providers[fallback_model] = settings.LLM_PROVIDER
         return models
 
+    # 将MCP工具定义转换为OpenAI function calling格式
     def _convert_mcp_tools_to_openai(self, mcp_tools: list[dict]) -> list[dict]:
         openai_tools = []
         for tool in mcp_tools:

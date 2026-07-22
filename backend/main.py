@@ -1,3 +1,7 @@
+# Author: glt
+# Email: guolintan@qq.com
+# Created: 2026-07-22
+
 import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
@@ -10,6 +14,7 @@ from database import init_db
 from routers import auth_router, users_router, mcp_services_router, chat_router
 
 
+# 应用生命周期管理：启动时初始化数据库
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await init_db()
@@ -41,6 +46,7 @@ if os.path.exists(frontend_dir):
     app.mount("/js", StaticFiles(directory=os.path.join(frontend_dir, "js")), name="js")
 
 
+# 提供前端首页
 @app.get("/")
 async def serve_index():
     index_path = os.path.join(frontend_dir, "index.html")
@@ -49,6 +55,7 @@ async def serve_index():
     return {"message": "AI Tools API", "version": settings.APP_VERSION}
 
 
+# 健康检查接口
 @app.get("/api/health")
 async def health_check():
     return {"status": "ok", "version": settings.APP_VERSION}

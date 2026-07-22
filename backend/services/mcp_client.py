@@ -1,3 +1,7 @@
+# Author: glt
+# Email: guolintan@qq.com
+# Created: 2026-07-22
+
 import json
 import os
 import subprocess
@@ -8,11 +12,15 @@ import httpx
 from config import settings
 
 
+# MCP客户端管理器：管理stdio和HTTP两种传输协议的MCP工具调用
 class MCPClientManager:
+
+    # 初始化MCP客户端管理器，创建进程和HTTP客户端缓存
     def __init__(self):
         self._processes: dict[str, asyncio.subprocess.Process] = {}
         self._http_clients: dict[str, httpx.AsyncClient] = {}
 
+    # 根据服务配置获取MCP工具列表
     async def get_tools(self, service_config: dict) -> list[dict]:
         transport = service_config.get("transport_type", "stdio")
         if transport == "stdio":
@@ -22,6 +30,7 @@ class MCPClientManager:
         else:
             return []
 
+    # 根据服务配置调用指定的MCP工具
     async def call_tool(self, service_config: dict, tool_name: str, arguments: dict) -> Any:
         transport = service_config.get("transport_type", "stdio")
         if transport == "stdio":
@@ -31,6 +40,7 @@ class MCPClientManager:
         else:
             raise ValueError(f"Unsupported transport type: {transport}")
 
+    # 通过stdio协议获取MCP工具列表
     async def _get_stdio_tools(self, config: dict) -> list[dict]:
         try:
             cmd = [config["command"]]
@@ -78,6 +88,7 @@ class MCPClientManager:
             print(f"Error getting stdio tools: {e}")
             return []
 
+    # 通过stdio协议调用MCP工具
     async def _call_stdio_tool(self, config: dict, tool_name: str, arguments: dict) -> Any:
         try:
             cmd = [config["command"]]
@@ -129,6 +140,7 @@ class MCPClientManager:
         except Exception as e:
             return {"error": str(e)}
 
+    # 通过HTTP(SSE/Streamable HTTP)协议获取MCP工具列表
     async def _get_http_tools(self, config: dict) -> list[dict]:
         try:
             url = config.get("url", "")
@@ -166,6 +178,7 @@ class MCPClientManager:
             print(f"Error getting HTTP tools: {e}")
             return []
 
+    # 通过HTTP(SSE/Streamable HTTP)协议调用MCP工具
     async def _call_http_tool(self, config: dict, tool_name: str, arguments: dict) -> Any:
         try:
             url = config.get("url", "")
@@ -204,6 +217,7 @@ class MCPClientManager:
         except Exception as e:
             return {"error": str(e)}
 
+    # 解析SSE格式的JSON响应
     def _parse_sse_json(self, text: str) -> dict | None:
         for line in text.strip().split("\n"):
             if line.startswith("data: "):
@@ -213,6 +227,7 @@ class MCPClientManager:
                     continue
         return None
 
+    # 初始化MCP HTTP会话，返回Session ID
     async def _init_http_session(self, client: httpx.AsyncClient, url: str, headers: dict) -> str | None:
         try:
             resp = await client.post(

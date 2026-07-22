@@ -1,3 +1,7 @@
+# Author: glt
+# Email: guolintan@qq.com
+# Created: 2026-07-22
+
 from datetime import datetime
 from pydantic import BaseModel, Field
 

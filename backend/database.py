@@ -1,3 +1,7 @@
+# Author: glt
+# Email: guolintan@qq.com
+# Created: 2026-07-22
+
 import os
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase
@@ -14,6 +18,7 @@ class Base(DeclarativeBase):
     pass
 
 
+# 获取数据库会话（FastAPI 依赖注入用）
 async def get_db():
     async with async_session() as session:
         try:
@@ -22,6 +27,7 @@ async def get_db():
             await session.close()
 
 
+# 初始化数据库：创建所有表
 async def init_db():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)

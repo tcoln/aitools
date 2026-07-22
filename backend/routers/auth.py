@@ -1,3 +1,7 @@
+# Author: glt
+# Email: guolintan@qq.com
+# Created: 2026-07-22
+
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy import func, select
@@ -12,6 +16,7 @@ router = APIRouter(prefix="/api/auth", tags=["auth"])
 security = HTTPBearer()
 
 
+# 从请求头获取JWT令牌并返回当前用户，验证失败抛出401
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
     db: AsyncSession = Depends(get_db),
@@ -30,6 +35,7 @@ async def get_current_user(
     return user
 
 
+# 依赖注入：要求当前用户为管理员，否则抛出403
 async def require_admin(
     current_user: User = Depends(get_current_user),
 ) -> User:
@@ -38,6 +44,7 @@ async def require_admin(
     return current_user
 
 
+# 用户注册：创建新用户，第一个用户自动设为管理员
 @router.post("/register", response_model=Token)
 async def register(data: UserCreate, db: AsyncSession = Depends(get_db)):
     existing = await AuthService.get_user_by_username(db, data.username)
@@ -62,6 +69,7 @@ async def register(data: UserCreate, db: AsyncSession = Depends(get_db)):
     return Token(access_token=token, user=UserResponse.model_validate(user))
 
 
+# 用户登录：验证用户名和密码，返回JWT令牌
 @router.post("/login", response_model=Token)
 async def login(data: UserLogin, db: AsyncSession = Depends(get_db)):
     user = await AuthService.authenticate_user(db, data.username, data.password)

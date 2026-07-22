@@ -1,3 +1,7 @@
+# Author: glt
+# Email: guolintan@qq.com
+# Created: 2026-07-22
+
 import uuid
 from datetime import datetime, timezone, timedelta
 from sqlalchemy import String, Text, DateTime, ForeignKey
@@ -7,6 +11,7 @@ from database import Base
 BEIJING_TZ = timezone(timedelta(hours=8))
 
 
+# 返回当前北京时间（带时区信息）
 def _beijing_now() -> datetime:
     return datetime.now(BEIJING_TZ)
 
