@@ -1,0 +1,142 @@
+curl 'http://aiml-pub.aisp.test.abc/agent-api/tool-agent-1-e70d3263/chatabc/chat' \
+  -H 'Accept-Language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -b 'chatabc-back-f5-cookie=1784707258.603.1339547.969604|c5a50ceef39483a644b3691a5cea9bd6; agt_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDb25zb2xlIEFQSSBQYXNzcG9ydCIsInVzZXJfaWQiOiI1MzA1YTdjOS05MzZlLTQ5MGEtOTA0Yi1kOGM4ZjdlYjA5YzAiLCJpc3MiOiJTRUxGX0hPU1RFRCIsImV4cCI6MTc4NzIxNzgzNn0.VFOOMtM4g71lMALbfwl-jJlwD5l3-X4KhACT5twL1jw' \
+  -H 'Origin: http://aiml-pub.aisp.test.abc' \
+  -H 'Referer: http://aiml-pub.aisp.test.abc/agent-front-dev/' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0' \
+  -H 'accept: text/event-stream' \
+  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDb25zb2xlIEFQSSBQYXNzcG9ydCIsInVzZXJfaWQiOiI1MzA1YTdjOS05MzZlLTQ5MGEtOTA0Yi1kOGM4ZjdlYjA5YzAiLCJpc3MiOiJTRUxGX0hPU1RFRCIsImV4cCI6MTc4NzIxNzgzNn0.VFOOMtM4g71lMALbfwl-jJlwD5l3-X4KhACT5twL1jw' \
+  --data-raw '{"appId":"BDC201704_01","trCode":"AISPNLPCHATBOT","trVersion":"1","timestamp":1784707359916,"requestId":"1c044ff5-e8df-4eb3-b6ea-46c6df6ceeb3","data":{"session_id":"51369303-b478-415d-88e0-0f74bda24f41","txt":"今天是什么日期","files":[],"stream":true}}' \
+  --insecure
+
+event:chat_started
+data:{"chat_id":"51369303-b478-415d-88e0-0f74bda24f41#1"}
+
+event:chunk
+data:{"content":"<tool_call>","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"\n","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"{\"","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"name","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"\":","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":" \"","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"get","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"_current","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"_time","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"\",","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":" \"","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"arguments","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"\":","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":" {\"","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"timezone","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"\":","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":" \"","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"Asia","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"/Sh","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"anghai","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"\"}}\n","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"</tool_call>","additional_kwargs":{"tool_calls":[{"id":"bb40f9bb-dfd6-44c9-b47f-7379896c4ba8","function":{"name":"get_current_time","arguments":"{\"timezone\": \"Asia/Shanghai\"}"}}]},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[{"name":"get_current_time","args":{"timezone":"Asia/Shanghai"},"id":"bb40f9bb-dfd6-44c9-b47f-7379896c4ba8","type":"tool_call"}],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:message
+data:{"content":"<tool_call>\n{\"name\": \"get_current_time\", \"arguments\": {\"timezone\": \"Asia/Shanghai\"}}\n</tool_call>","additional_kwargs":{"tool_calls":[{"id":"bb40f9bb-dfd6-44c9-b47f-7379896c4ba8","function":{"name":"get_current_time","arguments":"{\"timezone\": \"Asia/Shanghai\"}"}}]},"response_metadata":{},"type":"AIMessageChunk","name":null,"id":"lc_run--019f88d9-3ee1-7791-b8fc-42448fbf5b49","tool_calls":[{"name":"get_current_time","args":{"timezone":"Asia/Shanghai"},"id":"bb40f9bb-dfd6-44c9-b47f-7379896c4ba8","type":"tool_call"}],"invalid_tool_calls":[],"usage_metadata":null,"tool_call_chunks":[{"name":"get_current_time","args":"{\"timezone\": \"Asia/Shanghai\"}","id":"bb40f9bb-dfd6-44c9-b47f-7379896c4ba8","index":null,"type":"tool_call_chunk"}],"chunk_position":null}
+
+event:message
+data:{"content":[{"type":"text","text":"{\n  \"timezone\": \"Asia/Shanghai\",\n  \"datetime\": \"2026-07-22T16:02:51+08:00\",\n  \"is_dst\": false\n}","id":"lc_7c9678f7-1524-496e-af1e-59eb566f55fb"}],"additional_kwargs":{},"response_metadata":{},"type":"function","name":"get_current_time","id":null}
+
+event:chunk
+data:{"content":"今天","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"是","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"2","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"0","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"2","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"6","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"年","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"7","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"月","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"2","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"2","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"日","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"，","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"星期","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"二","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"。","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:message
+data:{"content":"今天是2026年7月22日，星期二。","additional_kwargs":{},"response_metadata":{},"type":"AIMessageChunk","name":null,"id":"lc_run--019f88d9-53a6-7a42-8466-b576ee156af2","tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null,"tool_call_chunks":[],"chunk_position":null}
+
+event:done
+data:{"status":"success","rescode":"FAIAG0000"}
+

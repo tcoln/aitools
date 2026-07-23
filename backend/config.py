@@ -23,6 +23,12 @@ class Settings(BaseSettings):
     LLM_MODEL: str = "gpt-4o"
     OLLAMA_API_BASE: str = "http://localhost:11434"
 
+    CHATABC_API_BASE: str = ""
+    CHATABC_API_KEY: str = ""
+    CHATABC_APP_ID: str = ""
+    CHATABC_TR_CODE: str = ""
+    CHATABC_TR_VERSION: str = "1"
+
     DATA_DIR: str = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
 
     class Config:

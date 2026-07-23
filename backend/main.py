@@ -11,7 +11,7 @@ from fastapi.responses import FileResponse
 
 from config import settings
 from database import init_db
-from routers import auth_router, users_router, mcp_services_router, chat_router
+from routers import auth_router, users_router, mcp_services_router, chat_router, chatabc_router
 
 
 # 应用生命周期管理：启动时初始化数据库
@@ -39,6 +39,7 @@ app.include_router(auth_router)
 app.include_router(users_router)
 app.include_router(mcp_services_router)
 app.include_router(chat_router)
+app.include_router(chatabc_router)
 
 frontend_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "frontend")
 if os.path.exists(frontend_dir):
