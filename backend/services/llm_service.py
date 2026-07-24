@@ -13,12 +13,13 @@ from services.mcp_client import mcp_client_manager
 logger = logging.getLogger(__name__)
 
 
-# LLM服务：统一管理OpenAI和Ollama的对话、工具调用、模型查询
+# LLM服务：统一管理OpenAI、Ollama、ChatABC的对话、工具调用、模型查询
 class LLMService:
 
-    # 初始化LLM服务，创建模型提供商缓存字典
+    # 初始化LLM服务，创建模型提供商缓存字典和ChatABC会话缓存
     def __init__(self):
         self._model_providers: dict[str, str] = {}
+        self._chatabc_sessions: dict[str, str] = {}
 
     # 判断当前模型是否为Ollama提供
     def _is_ollama(self, model: str | None = None) -> bool:
@@ -28,6 +29,14 @@ class LLMService:
             return False
         if model and model in self._model_providers:
             return self._model_providers[model] == "ollama"
+        return False
+
+    # 判断当前模型是否为ChatABC提供
+    def _is_chatabc(self, model: str | None = None) -> bool:
+        if settings.LLM_PROVIDER == "chatabc":
+            return True
+        if settings.CHATABC_ENABLED and model and model in self._model_providers:
+            return self._model_providers[model] == "chatabc"
         return False
 
     # 流式调用OpenAI兼容API
@@ -68,6 +77,43 @@ class LLMService:
                     except json.JSONDecodeError:
                         continue
 
+    # 流式调用ChatABC Agent服务（自带会话管理和工具调用，只返回内容流）
+    async def _stream_chatabc(
+        self, messages: list[dict],
+        conversation_id: str = "",
+    ) -> AsyncGenerator[dict, None]:
+        from services.chatabc_service import chatabc_service
+
+        session_id = self._chatabc_sessions.get(conversation_id) if conversation_id else None
+
+        if not session_id:
+            result = await chatabc_service.init_session()
+            session_id = result["session_id"]
+            if conversation_id:
+                self._chatabc_sessions[conversation_id] = session_id
+
+        txt = ""
+        for m in messages:
+            if m["role"] == "user":
+                txt = m["content"]
+            elif m["role"] == "assistant" and m.get("content"):
+                txt = f"[历史回复]: {m['content']}\n\n用户: {txt}"
+
+        logger.info(f"ChatABC chat: session_id={session_id}, txt_len={len(txt)}")
+
+        async for event in chatabc_service.chat(session_id, txt, stream=True):
+            evt_type = event["event"]
+            evt_data = event["data"]
+            if evt_type == "chunk":
+                content = evt_data.get("content", "")
+                if content:
+                    yield {"type": "content", "content": content}
+            elif evt_type == "failed":
+                raise Exception(f"ChatABC error: {json.dumps(evt_data, ensure_ascii=False)}")
+            elif evt_type == "done":
+                if evt_data.get("status") != "success":
+                    raise Exception(f"ChatABC done with error: {json.dumps(evt_data, ensure_ascii=False)}")
+
     # 流式调用Ollama API
     async def _stream_ollama(
         self, model: str, messages: list[dict], functions: list[dict] | None,
@@ -107,9 +153,17 @@ class LLMService:
         history: list[dict],
         mcp_tools: list[dict],
         model: str | None = None,
+        conversation_id: str = "",
     ) -> AsyncGenerator[dict, None]:
         model = model or settings.LLM_MODEL
-        logger.info(f"LLM chat: model={model}, provider=ollama={self._is_ollama(model)}")
+        logger.info(f"LLM chat: model={model}, provider=ollama={self._is_ollama(model)}, chatabc={self._is_chatabc(model)}")
+
+        if self._is_chatabc(model):
+            messages = history + [{"role": "user", "content": message}]
+            async for event in self._stream_chatabc(messages, conversation_id):
+                yield event
+            return
+
         functions = self._convert_mcp_tools_to_openai(mcp_tools) if mcp_tools else None
         messages = history + [{"role": "user", "content": message}]
 
@@ -225,8 +279,16 @@ class LLMService:
         messages: list[dict],
         mcp_tools: list[dict],
         model: str | None = None,
+        conversation_id: str = "",
     ) -> AsyncGenerator[str, None]:
         model = model or settings.LLM_MODEL
+
+        if self._is_chatabc(model):
+            async for event in self._stream_chatabc(messages, conversation_id):
+                if event["type"] == "content":
+                    yield event["content"]
+            return
+
         functions = self._convert_mcp_tools_to_openai(mcp_tools) if mcp_tools else None
 
         if self._is_ollama(model):
@@ -253,10 +315,20 @@ class LLMService:
                 if "content" in delta and delta["content"]:
                     yield delta["content"]
 
-    # 从Ollama和OpenAI获取可用模型列表
+    # 从Ollama、OpenAI和ChatABC获取可用模型列表
     async def fetch_models(self) -> list[dict]:
         models = []
         self._model_providers = {}
+
+        if settings.CHATABC_ENABLED:
+            chatabc_model = settings.CHATABC_MODEL
+            models.append({
+                "id": chatabc_model,
+                "provider": "abc",
+                "name": f"ChatABC Agent",
+            })
+            self._model_providers[chatabc_model] = "chatabc"
+
         if settings.LLM_PROVIDER == "ollama" or settings.LLM_PROVIDER == "all":
             try:
                 async with httpx.AsyncClient(timeout=10) as client:

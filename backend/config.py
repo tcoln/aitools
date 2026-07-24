@@ -28,6 +28,8 @@ class Settings(BaseSettings):
     CHATABC_APP_ID: str = ""
     CHATABC_TR_CODE: str = ""
     CHATABC_TR_VERSION: str = "1"
+    CHATABC_ENABLED: bool = False
+    CHATABC_MODEL: str = "chatabc-agent"
 
     DATA_DIR: str = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
 

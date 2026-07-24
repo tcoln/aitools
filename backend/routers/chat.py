@@ -146,7 +146,7 @@ async def send_message(
         tool_calls_collected = []
 
         try:
-            async for event in llm_service.chat(req.message, history, all_tools, req.model):
+            async for event in llm_service.chat(req.message, history, all_tools, req.model, conversation_id):
                 if event["type"] == "content":
                     full_content += event["content"]
                     yield f"data: {json.dumps({'type': 'content', 'content': event['content']})}\n\n"
@@ -209,7 +209,7 @@ async def send_message(
                     messages.append(tr)
 
                 final_content = ""
-                async for chunk in llm_service.chat_with_tool_results(messages, all_tools, req.model):
+                async for chunk in llm_service.chat_with_tool_results(messages, all_tools, req.model, conversation_id):
                     final_content += chunk
                     yield f"data: {json.dumps({'type': 'content', 'content': chunk})}\n\n"
 
