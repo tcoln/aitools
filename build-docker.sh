@@ -41,7 +41,7 @@ docker rm -f aitools 2>/dev/null || true
 echo "=== 启动 AITools ==="
 docker run -d -p 7000:8000 \
     --network aitools-net \
-    -e LLM_PROVIDER=ollama \
+    -e LLM_PROVIDER=all \
     -e OPENAI_MODEL=qwen:7b \
     -e OLLAMA_API_BASE=http://ollama:11434 \
     -e SECRET_KEY=change-me-in-production \

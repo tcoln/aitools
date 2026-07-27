@@ -5,7 +5,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - LLM_PROVIDER=${LLM_PROVIDER:-openai}
+      - LLM_PROVIDER=${LLM_PROVIDER:-all}
       - OPENAI_API_KEY=${OPENAI_API_KEY:-}
       - OPENAI_API_BASE=${OPENAI_API_BASE:-https://api.openai.com/v1}
       - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4o}
