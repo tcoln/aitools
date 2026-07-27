@@ -35,7 +35,7 @@ class LLMService:
     def _is_chatabc(self, model: str | None = None) -> bool:
         if settings.LLM_PROVIDER == "chatabc":
             return True
-        if settings.CHATABC_ENABLED and model and model in self._model_providers:
+        if model and model in self._model_providers:
             return self._model_providers[model] == "chatabc"
         return False
 
@@ -44,7 +44,7 @@ class LLMService:
         self, model: str, messages: list[dict], functions: list[dict] | None,
         tool_choice: str | None = None,
     ) -> AsyncGenerator[dict, None]:
-        url = f"{settings.LLM_API_BASE}/chat/completions"
+        url = f"{settings.OPENAI_API_BASE}/chat/completions"
         body = {"model": model, "messages": messages, "stream": True}
         if functions:
             body["tools"] = functions
@@ -52,7 +52,7 @@ class LLMService:
                 body["tool_choice"] = tool_choice
 
         headers = {
-            "Authorization": f"Bearer {settings.LLM_API_KEY}",
+            "Authorization": f"Bearer {settings.OPENAI_API_KEY}",
             "Content-Type": "application/json",
         }
 
@@ -155,7 +155,7 @@ class LLMService:
         model: str | None = None,
         conversation_id: str = "",
     ) -> AsyncGenerator[dict, None]:
-        model = model or settings.LLM_MODEL
+        model = model or settings.OPENAI_MODEL
         logger.info(f"LLM chat: model={model}, provider=ollama={self._is_ollama(model)}, chatabc={self._is_chatabc(model)}")
 
         if self._is_chatabc(model):
@@ -281,7 +281,7 @@ class LLMService:
         model: str | None = None,
         conversation_id: str = "",
     ) -> AsyncGenerator[str, None]:
-        model = model or settings.LLM_MODEL
+        model = model or settings.OPENAI_MODEL
 
         if self._is_chatabc(model):
             async for event in self._stream_chatabc(messages, conversation_id):
@@ -320,7 +320,7 @@ class LLMService:
         models = []
         self._model_providers = {}
 
-        if settings.CHATABC_ENABLED:
+        if settings.LLM_PROVIDER in ("chatabc", "all"):
             chatabc_model = settings.CHATABC_MODEL
             models.append({
                 "id": chatabc_model,
@@ -350,8 +350,8 @@ class LLMService:
             try:
                 async with httpx.AsyncClient(timeout=10) as client:
                     resp = await client.get(
-                        f"{settings.LLM_API_BASE}/models",
-                        headers={"Authorization": f"Bearer {settings.LLM_API_KEY}"},
+                        f"{settings.OPENAI_API_BASE}/models",
+                        headers={"Authorization": f"Bearer {settings.OPENAI_API_KEY}"},
                     )
                     if resp.status_code == 200:
                         data = resp.json()
@@ -367,8 +367,8 @@ class LLMService:
                 pass
 
         if not models:
-            fallback_model = settings.LLM_MODEL
-            if settings.LLM_PROVIDER == "ollama" and not settings.LLM_MODEL:
+            fallback_model = settings.OPENAI_MODEL
+            if settings.LLM_PROVIDER == "ollama" and not settings.OPENAI_MODEL:
                 fallback_model = "qwen3:0.6b"
             models.append({
                 "id": fallback_model,

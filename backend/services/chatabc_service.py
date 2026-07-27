@@ -52,7 +52,14 @@ class ChatABCService:
             resp = await client.post(url, json=body, headers=self._headers())
             if resp.status_code != 200:
                 raise Exception(f"init_session failed: {resp.status_code} {resp.text[:500]}")
-            return resp.json()
+            result = resp.json()
+
+            if "data" in result:
+                return result["data"]
+
+            raise Exception(
+                f"init_session 返回格式异常: {json.dumps(result, ensure_ascii=False)[:500]}"
+            )
 
     async def upload_file(
         self, session_id: str, filename: str, file_content: bytes,

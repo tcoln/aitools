@@ -3,8 +3,11 @@ set -e
 
 cd "$(dirname "$0")"
 
-echo "=== 构建镜像 ==="
-docker build -t aitools .
+VERSION=${VERSION:-v1.0.2}
+IMAGE_NAME=${IMAGE_NAME:-aitools:$VERSION}
+
+echo "=== 构建镜像: $IMAGE_NAME ==="
+docker build -t $IMAGE_NAME .
 
 echo "=== 创建 Docker 网络 ==="
 docker network create aitools-net 2>/dev/null || true
@@ -39,10 +42,10 @@ echo "=== 启动 AITools ==="
 docker run -d -p 7000:8000 \
     --network aitools-net \
     -e LLM_PROVIDER=ollama \
-    -e LLM_MODEL=qwen:7b \
+    -e OPENAI_MODEL=qwen:7b \
     -e OLLAMA_API_BASE=http://ollama:11434 \
     -e SECRET_KEY=change-me-in-production \
-    --name aitools aitools
+    --name aitools $IMAGE_NAME
 
 echo ""
 echo "=== 启动成功 ==="

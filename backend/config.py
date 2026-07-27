@@ -18,9 +18,9 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 480
 
     LLM_PROVIDER: str = "openai"
-    LLM_API_KEY: str = ""
-    LLM_API_BASE: str = "https://api.openai.com/v1"
-    LLM_MODEL: str = "gpt-4o"
+    OPENAI_API_KEY: str = ""
+    OPENAI_API_BASE: str = "https://api.openai.com/v1"
+    OPENAI_MODEL: str = "gpt-4o"
     OLLAMA_API_BASE: str = "http://localhost:11434"
 
     CHATABC_API_BASE: str = ""
@@ -28,7 +28,6 @@ class Settings(BaseSettings):
     CHATABC_APP_ID: str = ""
     CHATABC_TR_CODE: str = ""
     CHATABC_TR_VERSION: str = "1"
-    CHATABC_ENABLED: bool = False
     CHATABC_MODEL: str = "chatabc-agent"
 
     DATA_DIR: str = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")

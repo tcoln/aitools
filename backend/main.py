@@ -45,6 +45,7 @@ frontend_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "f
 if os.path.exists(frontend_dir):
     app.mount("/css", StaticFiles(directory=os.path.join(frontend_dir, "css")), name="css")
     app.mount("/js", StaticFiles(directory=os.path.join(frontend_dir, "js")), name="js")
+    app.mount("/vendor", StaticFiles(directory=os.path.join(frontend_dir, "vendor")), name="vendor")
 
 
 # 提供前端首页
