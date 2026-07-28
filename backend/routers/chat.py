@@ -146,15 +146,35 @@ async def send_message(
         tool_calls_collected = []
 
         try:
-            async for event in llm_service.chat(req.message, history, all_tools, req.model, conversation_id):
+            async for event in llm_service.chat(
+                req.message, history, all_tools, req.model, conversation_id,
+                tool_to_service_map=tool_to_service_map,
+                mcp_services=[
+                    {
+                        "name": s.name,
+                        "transport_type": s.transport_type,
+                        "command": s.command,
+                        "args": s.args,
+                        "env_vars": s.env_vars,
+                        "url": s.url,
+                        "headers": s.headers,
+                    }
+                    for s in active_services
+                ],
+                files=req.files,
+            ):
                 if event["type"] == "content":
                     full_content += event["content"]
                     yield f"data: {json.dumps({'type': 'content', 'content': event['content']})}\n\n"
                 elif event["type"] == "tool_calls":
                     tool_calls_collected = event["tool_calls"]
                     yield f"data: {json.dumps({'type': 'tool_calls', 'tool_calls': [{'function': tc['function']} for tc in tool_calls_collected]})}\n\n"
+                elif event["type"] == "tool_start":
+                    yield f"data: {json.dumps({'type': 'tool_start', 'tool_name': event['tool_name'], 'arguments': event['arguments']})}\n\n"
+                elif event["type"] == "tool_result":
+                    yield f"data: {json.dumps({'type': 'tool_result', 'tool_name': event['tool_name'], 'result': event['result']})}\n\n"
 
-            if tool_calls_collected:
+            if tool_calls_collected and not llm_service._is_chatabc2(req.model):
                 messages.append({
                     "role": "assistant",
                     "content": full_content or None,
@@ -219,6 +239,17 @@ async def send_message(
                         conversation_id=conversation_id,
                         role="assistant",
                         content=final_content,
+                        tool_calls=json.dumps(tool_calls_collected, ensure_ascii=False),
+                    )
+                    gen_db.add(assistant_msg)
+                    await gen_db.commit()
+            elif tool_calls_collected and llm_service._is_chatabc2(req.model):
+                async with async_session() as gen_db:
+                    assistant_msg = ChatHistory(
+                        user_id=current_user.id,
+                        conversation_id=conversation_id,
+                        role="assistant",
+                        content=full_content,
                         tool_calls=json.dumps(tool_calls_collected, ensure_ascii=False),
                     )
                     gen_db.add(assistant_msg)

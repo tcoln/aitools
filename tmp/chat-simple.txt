@@ -1,142 +1,589 @@
-curl 'http://aiml-pub.aisp.test.abc/agent-api/tool-agent-1-e70d3263/chatabc/chat' \
-  -H 'Accept-Language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6' \
-  -H 'Connection: keep-alive' \
-  -H 'Content-Type: application/json' \
-  -b 'chatabc-back-f5-cookie=1784707258.603.1339547.969604|c5a50ceef39483a644b3691a5cea9bd6; agt_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDb25zb2xlIEFQSSBQYXNzcG9ydCIsInVzZXJfaWQiOiI1MzA1YTdjOS05MzZlLTQ5MGEtOTA0Yi1kOGM4ZjdlYjA5YzAiLCJpc3MiOiJTRUxGX0hPU1RFRCIsImV4cCI6MTc4NzIxNzgzNn0.VFOOMtM4g71lMALbfwl-jJlwD5l3-X4KhACT5twL1jw' \
-  -H 'Origin: http://aiml-pub.aisp.test.abc' \
-  -H 'Referer: http://aiml-pub.aisp.test.abc/agent-front-dev/' \
-  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0' \
-  -H 'accept: text/event-stream' \
-  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDb25zb2xlIEFQSSBQYXNzcG9ydCIsInVzZXJfaWQiOiI1MzA1YTdjOS05MzZlLTQ5MGEtOTA0Yi1kOGM4ZjdlYjA5YzAiLCJpc3MiOiJTRUxGX0hPU1RFRCIsImV4cCI6MTc4NzIxNzgzNn0.VFOOMtM4g71lMALbfwl-jJlwD5l3-X4KhACT5twL1jw' \
-  --data-raw '{"appId":"BDC201704_01","trCode":"AISPNLPCHATBOT","trVersion":"1","timestamp":1784707359916,"requestId":"1c044ff5-e8df-4eb3-b6ea-46c6df6ceeb3","data":{"session_id":"51369303-b478-415d-88e0-0f74bda24f41","txt":"今天是什么日期","files":[],"stream":true}}' \
-  --insecure
+interface1: chat without file
+    curl 'http://aiml-pub.aisp.test.abc/agent-api/tool-agent-1-e70d3263/chatabc/chat' \
+      -H 'Accept-Language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6' \
+      -H 'Connection: keep-alive' \
+      -H 'Content-Type: application/json' \
+      -b 'chatabc-back-f5-cookie=1784707258.603.1339547.969604|c5a50ceef39483a644b3691a5cea9bd6; agt_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDb25zb2xlIEFQSSBQYXNzcG9ydCIsInVzZXJfaWQiOiI1MzA1YTdjOS05MzZlLTQ5MGEtOTA0Yi1kOGM4ZjdlYjA5YzAiLCJpc3MiOiJTRUxGX0hPU1RFRCIsImV4cCI6MTc4NzIxNzgzNn0.VFOOMtM4g71lMALbfwl-jJlwD5l3-X4KhACT5twL1jw' \
+      -H 'Origin: http://aiml-pub.aisp.test.abc' \
+      -H 'Referer: http://aiml-pub.aisp.test.abc/agent-front-dev/' \
+      -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0' \
+      -H 'accept: text/event-stream' \
+      -H 'authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDb25zb2xlIEFQSSBQYXNzcG9ydCIsInVzZXJfaWQiOiI1MzA1YTdjOS05MzZlLTQ5MGEtOTA0Yi1kOGM4ZjdlYjA5YzAiLCJpc3MiOiJTRUxGX0hPU1RFRCIsImV4cCI6MTc4NzIxNzgzNn0.VFOOMtM4g71lMALbfwl-jJlwD5l3-X4KhACT5twL1jw' \
+      --data-raw '{"appId":"BDC201704_01","trCode":"AISPNLPCHATBOT","trVersion":"1","timestamp":1784707359916,"requestId":"1c044ff5-e8df-4eb3-b6ea-46c6df6ceeb3","data":{"session_id":"51369303-b478-415d-88e0-0f74bda24f41","txt":"今天是什么日期","files":[],"stream":true}}' \
+      --insecure
 
-event:chat_started
-data:{"chat_id":"51369303-b478-415d-88e0-0f74bda24f41#1"}
+    event:chat_started
+    data:{"chat_id":"51369303-b478-415d-88e0-0f74bda24f41#1"}
 
-event:chunk
-data:{"content":"<tool_call>","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"<tool_call>","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"\n","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"\n","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"{\"","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"{\"","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"name","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"name","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"\":","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"\":","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":" \"","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":" \"","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"get","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"get","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"_current","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"_current","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"_time","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"_time","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"\",","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"\",","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":" \"","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":" \"","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"arguments","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"arguments","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"\":","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"\":","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":" {\"","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":" {\"","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"timezone","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"timezone","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"\":","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"\":","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":" \"","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":" \"","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"Asia","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"Asia","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"/Sh","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"/Sh","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"anghai","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"anghai","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"\"}}\n","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"\"}}\n","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"</tool_call>","additional_kwargs":{"tool_calls":[{"id":"bb40f9bb-dfd6-44c9-b47f-7379896c4ba8","function":{"name":"get_current_time","arguments":"{\"timezone\": \"Asia/Shanghai\"}"}}]},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[{"name":"get_current_time","args":{"timezone":"Asia/Shanghai"},"id":"bb40f9bb-dfd6-44c9-b47f-7379896c4ba8","type":"tool_call"}],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"</tool_call>","additional_kwargs":{"tool_calls":[{"id":"bb40f9bb-dfd6-44c9-b47f-7379896c4ba8","function":{"name":"get_current_time","arguments":"{\"timezone\": \"Asia/Shanghai\"}"}}]},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[{"name":"get_current_time","args":{"timezone":"Asia/Shanghai"},"id":"bb40f9bb-dfd6-44c9-b47f-7379896c4ba8","type":"tool_call"}],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:message
-data:{"content":"<tool_call>\n{\"name\": \"get_current_time\", \"arguments\": {\"timezone\": \"Asia/Shanghai\"}}\n</tool_call>","additional_kwargs":{"tool_calls":[{"id":"bb40f9bb-dfd6-44c9-b47f-7379896c4ba8","function":{"name":"get_current_time","arguments":"{\"timezone\": \"Asia/Shanghai\"}"}}]},"response_metadata":{},"type":"AIMessageChunk","name":null,"id":"lc_run--019f88d9-3ee1-7791-b8fc-42448fbf5b49","tool_calls":[{"name":"get_current_time","args":{"timezone":"Asia/Shanghai"},"id":"bb40f9bb-dfd6-44c9-b47f-7379896c4ba8","type":"tool_call"}],"invalid_tool_calls":[],"usage_metadata":null,"tool_call_chunks":[{"name":"get_current_time","args":"{\"timezone\": \"Asia/Shanghai\"}","id":"bb40f9bb-dfd6-44c9-b47f-7379896c4ba8","index":null,"type":"tool_call_chunk"}],"chunk_position":null}
+    event:message
+    data:{"content":"<tool_call>\n{\"name\": \"get_current_time\", \"arguments\": {\"timezone\": \"Asia/Shanghai\"}}\n</tool_call>","additional_kwargs":{"tool_calls":[{"id":"bb40f9bb-dfd6-44c9-b47f-7379896c4ba8","function":{"name":"get_current_time","arguments":"{\"timezone\": \"Asia/Shanghai\"}"}}]},"response_metadata":{},"type":"AIMessageChunk","name":null,"id":"lc_run--019f88d9-3ee1-7791-b8fc-42448fbf5b49","tool_calls":[{"name":"get_current_time","args":{"timezone":"Asia/Shanghai"},"id":"bb40f9bb-dfd6-44c9-b47f-7379896c4ba8","type":"tool_call"}],"invalid_tool_calls":[],"usage_metadata":null,"tool_call_chunks":[{"name":"get_current_time","args":"{\"timezone\": \"Asia/Shanghai\"}","id":"bb40f9bb-dfd6-44c9-b47f-7379896c4ba8","index":null,"type":"tool_call_chunk"}],"chunk_position":null}
 
-event:message
-data:{"content":[{"type":"text","text":"{\n  \"timezone\": \"Asia/Shanghai\",\n  \"datetime\": \"2026-07-22T16:02:51+08:00\",\n  \"is_dst\": false\n}","id":"lc_7c9678f7-1524-496e-af1e-59eb566f55fb"}],"additional_kwargs":{},"response_metadata":{},"type":"function","name":"get_current_time","id":null}
+    event:message
+    data:{"content":[{"type":"text","text":"{\n  \"timezone\": \"Asia/Shanghai\",\n  \"datetime\": \"2026-07-22T16:02:51+08:00\",\n  \"is_dst\": false\n}","id":"lc_7c9678f7-1524-496e-af1e-59eb566f55fb"}],"additional_kwargs":{},"response_metadata":{},"type":"function","name":"get_current_time","id":null}
 
-event:chunk
-data:{"content":"今天","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"今天","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"是","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"是","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"2","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"2","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"0","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"0","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"2","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"2","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"6","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"6","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"年","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"年","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"7","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"7","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"月","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"月","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"2","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"2","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"2","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"2","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"日","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"日","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"，","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"，","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"星期","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"星期","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"二","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"二","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:chunk
-data:{"content":"。","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+    event:chunk
+    data:{"content":"。","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
 
-event:message
-data:{"content":"今天是2026年7月22日，星期二。","additional_kwargs":{},"response_metadata":{},"type":"AIMessageChunk","name":null,"id":"lc_run--019f88d9-53a6-7a42-8466-b576ee156af2","tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null,"tool_call_chunks":[],"chunk_position":null}
+    event:message
+    data:{"content":"今天是2026年7月22日，星期二。","additional_kwargs":{},"response_metadata":{},"type":"AIMessageChunk","name":null,"id":"lc_run--019f88d9-53a6-7a42-8466-b576ee156af2","tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null,"tool_call_chunks":[],"chunk_position":null}
 
-event:done
-data:{"status":"success","rescode":"FAIAG0000"}
+    event:done
+    data:{"status":"success","rescode":"FAIAG0000"}
+
+interface2: upload file
+    curl 'http://aiml-pub.aisp.test.abc/agent-api/tool-agent-1-e70d3263/chatabc/upload_file' \
+      -H 'Accept: application/json, text/plain, */*' \
+      -H 'Accept-Language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6' \
+      -H 'Connection: keep-alive' \
+      -H 'Content-Type: multipart/form-data; boundary=----WebKitFormBoundarylHQE8JdCha2826vD' \
+      -b 'chatabc-back-f5-cookie=1785154611.922.1736174.322744|c5a50ceef39483a644b3691a5cea9bd6; agt_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDb25zb2xlIEFQSSBQYXNzcG9ydCIsInVzZXJfaWQiOiI1MzA1YTdjOS05MzZlLTQ5MGEtOTA0Yi1kOGM4ZjdlYjA5YzAiLCJpc3MiOiJTRUxGX0hPU1RFRCIsImV4cCI6MTc4Nzc0NjYwOH0.-70Awe_bGVh22vUyMY78_4vopjeijGsy3gYAu1zXPcI' \
+      -H 'Origin: http://aiml-pub.aisp.test.abc' \
+      -H 'Referer: http://aiml-pub.aisp.test.abc/agent-front-dev/' \
+      -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0' \
+      --data-raw $'------WebKitFormBoundarylHQE8JdCha2826vD\r\nContent-Disposition: form-data; name="file"; filename="????.xlsx"\r\nContent-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\r\n\r\n\r\n------WebKitFormBoundarylHQE8JdCha2826vD\r\nContent-Disposition: form-data; name="session_id"\r\n\r\n8abdcdd1-8268-4eef-b47f-a9a3299dda9d\r\n------WebKitFormBoundarylHQE8JdCha2826vD--\r\n' \
+      --insecure
+
+    {"resCode":"FAIAG0000","resMessage":"SUCCESS","responseId":"927ec528-15ef-408b-a315-b76ee17f3dff","timestamp":1785154654158,"data":{"file_path":"/agent-workspace/tmpFile/8abdcdd1-8268-4eef-b47f-a9a3299dda9d/????.xlsx","relative_path":"????.xlsx","filename":"????.xlsx","subfolder":""}}
+
+interface3: chat with file
+    curl 'http://aiml-pub.aisp.test.abc/agent-api/tool-agent-1-e70d3263/chatabc/chat' \
+      -H 'Accept-Language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6' \
+      -H 'Connection: keep-alive' \
+      -H 'Content-Type: application/json' \
+      -b 'chatabc-back-f5-cookie=1785200363.394.1756821.57657|c5a50ceef39483a644b3691a5cea9bd6; agt_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDb25zb2xlIEFQSSBQYXNzcG9ydCIsInVzZXJfaWQiOiI1MzA1YTdjOS05MzZlLTQ5MGEtOTA0Yi1kOGM4ZjdlYjA5YzAiLCJpc3MiOiJTRUxGX0hPU1RFRCIsImV4cCI6MTc4Nzc5MjM1OX0.310rvczQZZjVMA7t8uG5CmUtNukm_rZd4m0wnjtt_mU' \
+      -H 'Origin: http://aiml-pub.aisp.test.abc' \
+      -H 'Referer: http://aiml-pub.aisp.test.abc/agent-front-dev/' \
+      -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0' \
+      -H 'accept: text/event-stream' \
+      -H 'authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDb25zb2xlIEFQSSBQYXNzcG9ydCIsInVzZXJfaWQiOiI1MzA1YTdjOS05MzZlLTQ5MGEtOTA0Yi1kOGM4ZjdlYjA5YzAiLCJpc3MiOiJTRUxGX0hPU1RFRCIsImV4cCI6MTc4Nzc5MjM1OX0.310rvczQZZjVMA7t8uG5CmUtNukm_rZd4m0wnjtt_mU' \
+      --data-raw '{"appId":"BDC201704_01","trCode":"AISPNLPCHATBOT","trVersion":"1","timestamp":1785201170102,"requestId":"ac5bdb61-71e6-493b-ac06-08dbf4916678","data":{"session_id":"860e539a-07f2-4e26-bd53-fb84a7878795","txt":"50???????","files":[{"file_id":"????","url":"????.xlsx","content_type":"doc","filePath":"/agent-workspace/tmpFile/860e539a-07f2-4e26-bd53-fb84a7878795/????.xlsx"}],"stream":true}}' \
+      --insecure
+
+      event:chat_started
+        data:{"chat_id":"860e539a-07f2-4e26-bd53-fb84a7878795#0"}
+
+        event:chunk
+        data:{"content":"<tool_call>","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"\n","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"{\"","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"name","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"\":","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":" \"","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"get","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"_local","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"_text","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"_content","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"\",","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":" \"","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"arguments","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"\":","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":" {\"","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"file","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"_path","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"\":","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":" \"/","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"agent","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"-work","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"space","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"/tmp","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"File","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"/","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"8","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"6","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"0","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"e","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"5","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"3","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"9","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"a","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"-","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"0","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"7","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"f","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"2","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"-","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"4","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"e","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"2","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"6","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"-b","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"d","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"5","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"3","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"-f","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"b","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"8","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"4","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"a","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"7","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"8","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"7","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"8","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"7","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"9","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"5","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"/","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"?","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"?","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":".xlsx","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"\"}}\n","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"</tool_call>","additional_kwargs":{"tool_calls":[{"id":"4564af1e-c69f-420d-a361-ca1b4969a8cf","function":{"name":"get_local_text_content","arguments":"{\"file_path\": \"/agent-workspace/tmpFile/860e539a-07f2-4e26-bd53-fb84a7878795/????.xlsx\"}"}}]},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[{"name":"get_local_text_content","args":{"file_path":"/agent-workspace/tmpFile/860e539a-07f2-4e26-bd53-fb84a7878795/????.xlsx"},"id":"4564af1e-c69f-420d-a361-ca1b4969a8cf","type":"tool_call"}],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:message
+        data:{"content":"<tool_call>\n{\"name\": \"get_local_text_content\", \"arguments\": {\"file_path\": \"/agent-workspace/tmpFile/860e539a-07f2-4e26-bd53-fb84a7878795/????.xlsx\"}}\n</tool_call>","additional_kwargs":{"tool_calls":[{"id":"4564af1e-c69f-420d-a361-ca1b4969a8cf","function":{"name":"get_local_text_content","arguments":"{\"file_path\": \"/agent-workspace/tmpFile/860e539a-07f2-4e26-bd53-fb84a7878795/????.xlsx\"}"}}]},"response_metadata":{},"type":"AIMessageChunk","name":null,"id":"lc_run--019fa648-2074-7af0-a9f0-2ba87578be3b","tool_calls":[{"name":"get_local_text_content","args":{"file_path":"/agent-workspace/tmpFile/860e539a-07f2-4e26-bd53-fb84a7878795/????.xlsx"},"id":"4564af1e-c69f-420d-a361-ca1b4969a8cf","type":"tool_call"}],"invalid_tool_calls":[],"usage_metadata":null,"tool_call_chunks":[{"name":"get_local_text_content","args":"{\"file_path\": \"/agent-workspace/tmpFile/860e539a-07f2-4e26-bd53-fb84a7878795/????.xlsx\"}","id":"4564af1e-c69f-420d-a361-ca1b4969a8cf","index":null,"type":"tool_call_chunk"}],"chunk_position":null}
+
+        event:message
+        data:{"content":[{"type":"text","text":"Sheet1\n\t??\t????\t??????\t???\t?????\t???\t??/??\t??\t\t??\n\t1\t?????????????????\t1. ??????????????????\t??????????????????\t???\t\t?xx??????????\n\t\t\t2. ?????????????????\n\t\t\t3. ??????????????\t\t??\n\t\t\t4. ?????????????????\t????????\t???\n\t\t\t5.?????????????????????????????\t?? WBS ???????????\t???\n\t2\t???????\t1. ????????????????????????????????\t????????????\t???\t???\t??xx????????\n\t\t\t2. ?????????????????????\t\t???\n\t\t\t3. ???????????\t\t???\n\t3\tAI?????????\t1. ?????? AI ??????????????\t????????\t???\t???\t???? AI ???????\n\t\t\t2. AI ????????????????????????????\tAI ????????????????????\n\t\t\t3. ??????????????2????????? AI ???????? AI ?????????????\n\t4\t??????\t1. ????????????????????????????? 2:00???????\t?????????????????\n\t\t\t2. ???????????????????\n\t5\t????????????\t1. ????????????????\t???????????\t???\n\t\t\t2. ????????\t?????????????\n\t\t\t2. ?????????????????????\t????????\n\t6\t?????????????\t1. ???????????\n\t\t\t2. ???????????????????????????","id":"lc_324eed93-5d3d-4ce3-ae4e-99095d68ea98"}],"additional_kwargs":{},"response_metadata":{},"type":"function","name":"get_local_text_content","id":null}
+
+        event:chunk
+        data:{"content":"?","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"???","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"?","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"?","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"?","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"?","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"?","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"6","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"?","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"?","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"?","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"?","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"???","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"?","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"?","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"?","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"???","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"?","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"???","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"?","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"AI","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"?","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"?","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"???","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"?","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"???","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"???","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"?","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"?","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"????","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"?","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"???","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"?","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"??","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:chunk
+        data:{"content":"?","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+        event:message
+        data:{"content":"???????????????????6??????????????????????????????????????????AI??????????????????????????????????????????????????????????","additional_kwargs":{},"response_metadata":{},"type":"AIMessageChunk","name":null,"id":"lc_run--019fa648-5810-70f2-9714-06c11c4ddaca","tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null,"tool_call_chunks":[],"chunk_position":null}
+
+        event:done
+        data:{"status":"success","rescode":"FAIAG0000"}
 

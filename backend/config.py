@@ -29,6 +29,7 @@ class Settings(BaseSettings):
     CHATABC_TR_CODE: str = ""
     CHATABC_TR_VERSION: str = "1"
     CHATABC_MODEL: str = "chatabc-agent"
+    CHATABC2_MODEL: str = "chatabc2-agent"
 
     DATA_DIR: str = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
 

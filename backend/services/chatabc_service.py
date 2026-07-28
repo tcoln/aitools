@@ -41,12 +41,15 @@ class ChatABCService:
 
     async def init_session(
         self, prompt_variables: list[dict] | None = None,
+        tools: list[dict] | None = None,
     ) -> dict:
         url = f"{self._base_url()}/init_session"
         body = self._common_body()
         body["data"] = {}
         if prompt_variables:
             body["data"]["prompt_variables"] = prompt_variables
+        if tools:
+            body["data"]["tools"] = tools
 
         async with httpx.AsyncClient(timeout=30.0, verify=False) as client:
             resp = await client.post(url, json=body, headers=self._headers())
@@ -78,7 +81,14 @@ class ChatABCService:
             resp = await client.post(url, data=data, files=files, headers=headers)
             if resp.status_code != 200:
                 raise Exception(f"upload_file failed: {resp.status_code} {resp.text[:500]}")
-            return resp.json()
+            result = resp.json()
+
+            if "data" in result:
+                return result["data"]
+
+            raise Exception(
+                f"upload_file 返回格式异常: {json.dumps(result, ensure_ascii=False)[:500]}"
+            )
 
     async def chat(
         self,

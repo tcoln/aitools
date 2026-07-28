@@ -98,7 +98,7 @@ const api = {
     },
 
     chat: {
-        async sendStream(message, conversationId, onEvent, model) {
+        async sendStream(message, conversationId, onEvent, model, files) {
             const headers = {};
             if (api.token) {
                 headers['Authorization'] = `Bearer ${api.token}`;
@@ -107,6 +107,7 @@ const api = {
 
             const body = { message, conversation_id: conversationId };
             if (model) body.model = model;
+            if (files && files.length > 0) body.files = files;
 
             const response = await fetch(API_BASE + '/chat/send', {
                 method: 'POST',

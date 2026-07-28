@@ -122,6 +122,7 @@ async function sendMessage() {
 
     chatInput.value = '';
     chatInput.style.height = 'auto';
+    const savedAttachments = attachments.map(a => ({ name: a.name, content: a.content || '' }));
     clearAttachments();
 
     if (chatMessages.querySelector('.chat-welcome')) {
@@ -182,7 +183,7 @@ async function sendMessage() {
                     contentDiv.innerHTML += `<div class="error-message">错误: ${escapeHtml(event.error)}</div>`;
                     break;
             }
-        }, currentModel);
+        }, currentModel, savedAttachments);
     } catch (e) {
         contentDiv.innerHTML += `<div class="error-message">请求失败: ${escapeHtml(e.message)}</div>`;
     }

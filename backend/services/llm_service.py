@@ -4,6 +4,7 @@
 
 import json
 import logging
+import os
 from typing import AsyncGenerator
 import httpx
 
@@ -37,6 +38,12 @@ class LLMService:
             return True
         if model and model in self._model_providers:
             return self._model_providers[model] == "chatabc"
+        return False
+
+    # 判断当前模型是否为ChatABC2提供（支持本地工具调用）
+    def _is_chatabc2(self, model: str | None = None) -> bool:
+        if model and model in self._model_providers:
+            return self._model_providers[model] == "chatabc2"
         return False
 
     # 流式调用OpenAI兼容API
@@ -81,6 +88,7 @@ class LLMService:
     async def _stream_chatabc(
         self, messages: list[dict],
         conversation_id: str = "",
+        files: list[dict] | None = None,
     ) -> AsyncGenerator[dict, None]:
         from services.chatabc_service import chatabc_service
 
@@ -92,6 +100,25 @@ class LLMService:
             if conversation_id:
                 self._chatabc_sessions[conversation_id] = session_id
 
+        uploaded_files = []
+        if files and session_id:
+            for f in files:
+                filename = f.get("name", "unknown")
+                content = f.get("content", "")
+                if content:
+                    try:
+                        result = await chatabc_service.upload_file(
+                            session_id, filename, content.encode("utf-8")
+                        )
+                        uploaded_files.append({
+                            "file_id": os.path.splitext(filename)[0],
+                            "url": filename,
+                            "content_type": "doc",
+                            "filePath": result.get("file_path", ""),
+                        })
+                    except Exception as e:
+                        logger.warning(f"ChatABC upload_file failed: {e}")
+
         txt = ""
         for m in messages:
             if m["role"] == "user":
@@ -99,9 +126,9 @@ class LLMService:
             elif m["role"] == "assistant" and m.get("content"):
                 txt = f"[历史回复]: {m['content']}\n\n用户: {txt}"
 
-        logger.info(f"ChatABC chat: session_id={session_id}, txt_len={len(txt)}")
+        logger.info(f"ChatABC chat: session_id={session_id}, txt_len={len(txt)}, files={len(uploaded_files)}")
 
-        async for event in chatabc_service.chat(session_id, txt, stream=True):
+        async for event in chatabc_service.chat(session_id, txt, files=uploaded_files, stream=True):
             evt_type = event["event"]
             evt_data = event["data"]
             if evt_type == "chunk":
@@ -113,6 +140,136 @@ class LLMService:
             elif evt_type == "done":
                 if evt_data.get("status") != "success":
                     raise Exception(f"ChatABC done with error: {json.dumps(evt_data, ensure_ascii=False)}")
+
+    # 流式调用ChatABC2（支持本地MCP工具和内置工具调用）
+    async def _stream_chatabc2(
+        self, messages: list[dict],
+        tools: list[dict],
+        tool_to_service_map: dict[str, str],
+        mcp_services: list[dict],
+        conversation_id: str = "",
+        files: list[dict] | None = None,
+    ) -> AsyncGenerator[dict, None]:
+        from services.chatabc_service import chatabc_service
+        from services.builtin_tools import execute_builtin_tool, BUILTIN_SERVICE_NAME
+
+        session_id = self._chatabc_sessions.get(conversation_id) if conversation_id else None
+
+        if not session_id:
+            result = await chatabc_service.init_session(tools=tools)
+            session_id = result["session_id"]
+            if conversation_id:
+                self._chatabc_sessions[conversation_id] = session_id
+
+        uploaded_files = []
+        if files and session_id:
+            for f in files:
+                filename = f.get("name", "unknown")
+                content = f.get("content", "")
+                if content:
+                    try:
+                        result = await chatabc_service.upload_file(
+                            session_id, filename, content.encode("utf-8")
+                        )
+                        uploaded_files.append({
+                            "file_id": os.path.splitext(filename)[0],
+                            "url": filename,
+                            "content_type": "doc",
+                            "filePath": result.get("file_path", ""),
+                        })
+                    except Exception as e:
+                        logger.warning(f"ChatABC2 upload_file failed: {e}")
+
+        max_rounds = 5
+        current_messages = messages
+
+        for round_num in range(max_rounds):
+            txt = ""
+            for m in current_messages:
+                if m["role"] == "user":
+                    txt = m["content"]
+                elif m["role"] == "tool" and m.get("content"):
+                    txt = f"[工具结果]: {m['content']}\n\n用户: {txt}"
+                elif m["role"] == "assistant" and m.get("content"):
+                    txt = f"[历史回复]: {m['content']}\n\n用户: {txt}"
+
+            logger.info(f"ChatABC2 chat: session_id={session_id}, round={round_num}, txt_len={len(txt)}")
+
+            content_chunks = []
+            tool_calls = []
+
+            async for event in chatabc_service.chat(session_id, txt, files=uploaded_files if round_num == 0 else None, stream=True):
+                evt_type = event["event"]
+                evt_data = event["data"]
+
+                if evt_type == "chunk":
+                    chunk = evt_data.get("content", "")
+                    if chunk:
+                        content_chunks.append(chunk)
+                        yield {"type": "content", "content": chunk}
+                elif evt_type == "message":
+                    msg_content = evt_data.get("content", "")
+                    msg_tool_calls = evt_data.get("tool_calls", [])
+                    if msg_content and not content_chunks:
+                        content_chunks.append(msg_content)
+                        yield {"type": "content", "content": msg_content}
+                    if msg_tool_calls:
+                        tool_calls = msg_tool_calls
+                elif evt_type == "failed":
+                    raise Exception(f"ChatABC2 error: {json.dumps(evt_data, ensure_ascii=False)}")
+                elif evt_type == "done":
+                    if evt_data.get("status") != "success":
+                        raise Exception(f"ChatABC2 done with error: {json.dumps(evt_data, ensure_ascii=False)}")
+
+            if not tool_calls:
+                return
+
+            yield {
+                "type": "tool_calls",
+                "tool_calls": [{"function": tc.get("function", tc)} for tc in tool_calls],
+            }
+
+            tool_results = []
+            for tc in tool_calls:
+                func = tc.get("function", tc)
+                func_name = func.get("name", "")
+                try:
+                    func_args = func.get("arguments", {})
+                    if isinstance(func_args, str):
+                        func_args = json.loads(func_args)
+                except (json.JSONDecodeError, TypeError):
+                    func_args = {}
+
+                yield {"type": "tool_start", "tool_name": func_name, "arguments": func_args}
+
+                service_name = tool_to_service_map.get(func_name)
+                if service_name == BUILTIN_SERVICE_NAME:
+                    result = await execute_builtin_tool(func_name, func_args)
+                elif service_name:
+                    service_config = next(
+                        (s for s in mcp_services if s["name"] == service_name), None
+                    )
+                    if service_config:
+                        result = await mcp_client_manager.call_tool(
+                            service_config, func_name, func_args
+                        )
+                    else:
+                        result = {"error": f"Service {service_name} not found"}
+                else:
+                    result = {"error": f"Tool {func_name} not found in any service"}
+
+                yield {"type": "tool_result", "tool_name": func_name, "result": result}
+
+                tool_result_msg = {
+                    "role": "tool",
+                    "tool_call_id": tc.get("id", ""),
+                    "content": json.dumps(result, ensure_ascii=False),
+                }
+                tool_results.append(tool_result_msg)
+
+            current_messages = [{"role": "user", "content": txt}] + tool_results
+
+        logger.warning(f"ChatABC2 reached max rounds ({max_rounds}) without final answer")
 
     # 流式调用Ollama API
     async def _stream_ollama(
@@ -154,13 +311,28 @@ class LLMService:
         mcp_tools: list[dict],
         model: str | None = None,
         conversation_id: str = "",
+        tool_to_service_map: dict[str, str] | None = None,
+        mcp_services: list[dict] | None = None,
+        files: list[dict] | None = None,
     ) -> AsyncGenerator[dict, None]:
         model = model or settings.OPENAI_MODEL
-        logger.info(f"LLM chat: model={model}, provider=ollama={self._is_ollama(model)}, chatabc={self._is_chatabc(model)}")
+        logger.info(f"LLM chat: model={model}, provider=ollama={self._is_ollama(model)}, chatabc={self._is_chatabc(model)}, chatabc2={self._is_chatabc2(model)}")
 
         if self._is_chatabc(model):
             messages = history + [{"role": "user", "content": message}]
-            async for event in self._stream_chatabc(messages, conversation_id):
+            async for event in self._stream_chatabc(messages, conversation_id, files=files):
+                yield event
+            return
+
+        if self._is_chatabc2(model):
+            messages = history + [{"role": "user", "content": message}]
+            async for event in self._stream_chatabc2(
+                messages, mcp_tools,
+                tool_to_service_map or {},
+                mcp_services or [],
+                conversation_id,
+                files=files,
+            ):
                 yield event
             return
 
@@ -325,9 +497,17 @@ class LLMService:
             models.append({
                 "id": chatabc_model,
                 "provider": "abc",
-                "name": f"ChatABC Agent",
+                "name": "ChatABC Agent",
             })
             self._model_providers[chatabc_model] = "chatabc"
+
+            chatabc2_model = settings.CHATABC2_MODEL
+            models.append({
+                "id": chatabc2_model,
+                "provider": "abc2",
+                "name": "ChatABC Agent (支持本地工具)",
+            })
+            self._model_providers[chatabc2_model] = "chatabc2"
 
         if settings.LLM_PROVIDER == "ollama" or settings.LLM_PROVIDER == "all":
             try:
