@@ -96,6 +96,7 @@ class ChatABCService:
         txt: str,
         files: list[dict] | None = None,
         stream: bool = True,
+        tools: list[dict] | None = None,
     ) -> AsyncGenerator[dict, None]:
         url = f"{self._base_url()}/chat"
         body = self._common_body()
@@ -105,6 +106,8 @@ class ChatABCService:
             "files": files or [],
             "stream": stream,
         }
+        if tools:
+            body["data"]["tools"] = tools
 
         headers = self._headers()
 

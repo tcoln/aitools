@@ -298,7 +298,7 @@ function stripFileContent(content) {
 async function handleFileSelect(e) {
     const files = Array.from(e.target.files);
     const textExtensions = ['.txt', '.md', '.py', '.js', '.ts', '.jsx', '.tsx', '.json', '.csv', '.xml', '.yaml', '.yml', '.toml', '.ini', '.cfg', '.log', '.html', '.css', '.sql', '.sh', '.bash', '.env', '.gitignore', '.java', '.c', '.cpp', '.h', '.rs', '.go', '.rb', '.php', '.swift', '.kt', '.scala', '.r', '.lua', '.vim', '.conf'];
-    const officeExtensions = ['.xlsx', '.xlsm', '.xltx', '.xltm', '.docx', '.docm', '.dotx', '.dotm', '.wpsx'];
+    const officeExtensions = ['.xlsx', '.xlsm', '.xltx', '.xltm', '.docx', '.docm', '.dotx', '.dotm', '.wpsx', '.pdf', '.doc', '.wps', '.et'];
     const MAX_TEXT_SIZE = 2 * 1024 * 1024;
 
     for (const file of files) {

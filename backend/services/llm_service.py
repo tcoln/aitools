@@ -156,6 +156,8 @@ class LLMService:
         session_id = self._chatabc_sessions.get(conversation_id) if conversation_id else None
 
         if not session_id:
+            tool_names = [t.get("name", "?") for t in tools]
+            logger.info(f"ChatABC2 init_session: tools_count={len(tools)}, tool_names={tool_names}")
             result = await chatabc_service.init_session(tools=tools)
             session_id = result["session_id"]
             if conversation_id:
@@ -198,7 +200,7 @@ class LLMService:
             content_chunks = []
             tool_calls = []
 
-            async for event in chatabc_service.chat(session_id, txt, files=uploaded_files if round_num == 0 else None, stream=True):
+            async for event in chatabc_service.chat(session_id, txt, files=uploaded_files if round_num == 0 else None, stream=True, tools=tools):
                 evt_type = event["event"]
                 evt_data = event["data"]
 

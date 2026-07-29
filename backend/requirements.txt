@@ -11,3 +11,4 @@ pydantic==2.9.2
 pydantic-settings==2.5.2
 openpyxl==3.1.5
 python-docx==1.1.2
+pypdf>=5.0.0

@@ -3,7 +3,7 @@ set -e
 
 cd "$(dirname "$0")"
 
-VERSION=${VERSION:-v1.0.2}
+VERSION=${VERSION:-v1.0.3}
 IMAGE_NAME=${IMAGE_NAME:-aitools:$VERSION}
 
 echo "=== 构建镜像: $IMAGE_NAME ==="
