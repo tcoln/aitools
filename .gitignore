@@ -3,3 +3,4 @@
 backend/data
 *.log
 *.png
+*.pdf

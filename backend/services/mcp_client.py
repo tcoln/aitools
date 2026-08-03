@@ -4,7 +4,6 @@
 
 import json
 import os
-import subprocess
 import asyncio
 from typing import Any
 import httpx
@@ -12,30 +11,31 @@ import httpx
 from config import settings
 
 
-# MCP客户端管理器：管理stdio和HTTP两种传输协议的MCP工具调用
+# MCP客户端管理器：管理stdio、SSE和Streamable HTTP三种传输协议的MCP工具调用
 class MCPClientManager:
 
-    # 初始化MCP客户端管理器，创建进程和HTTP客户端缓存
     def __init__(self):
         self._processes: dict[str, asyncio.subprocess.Process] = {}
         self._http_clients: dict[str, httpx.AsyncClient] = {}
 
-    # 根据服务配置获取MCP工具列表
     async def get_tools(self, service_config: dict) -> list[dict]:
         transport = service_config.get("transport_type", "stdio")
         if transport == "stdio":
             return await self._get_stdio_tools(service_config)
-        elif transport in ("sse", "streamable-http"):
+        elif transport == "sse":
+            return await self._get_sse_tools(service_config)
+        elif transport == "streamable-http":
             return await self._get_http_tools(service_config)
         else:
             return []
 
-    # 根据服务配置调用指定的MCP工具
     async def call_tool(self, service_config: dict, tool_name: str, arguments: dict) -> Any:
         transport = service_config.get("transport_type", "stdio")
         if transport == "stdio":
             return await self._call_stdio_tool(service_config, tool_name, arguments)
-        elif transport in ("sse", "streamable-http"):
+        elif transport == "sse":
+            return await self._call_sse_tool(service_config, tool_name, arguments)
+        elif transport == "streamable-http":
             return await self._call_http_tool(service_config, tool_name, arguments)
         else:
             raise ValueError(f"Unsupported transport type: {transport}")
@@ -140,7 +140,45 @@ class MCPClientManager:
         except Exception as e:
             return {"error": str(e)}
 
-    # 通过HTTP(SSE/Streamable HTTP)协议获取MCP工具列表
+    # ==================== SSE 传输协议（使用 fastmcp.Client） ====================
+
+    async def _get_sse_tools(self, config: dict) -> list[dict]:
+        try:
+            url = config.get("url", "")
+            if not url:
+                return []
+            from fastmcp import Client
+            async with Client(url) as client:
+                tools = await client.list_tools()
+                return [
+                    {
+                        "name": t.name,
+                        "description": t.description or "",
+                        "inputSchema": t.inputSchema if hasattr(t, "inputSchema") else {},
+                    }
+                    for t in tools
+                ]
+        except Exception as e:
+            print(f"Error getting SSE tools: {e}")
+            return []
+
+    async def _call_sse_tool(self, config: dict, tool_name: str, arguments: dict) -> Any:
+        try:
+            url = config.get("url", "")
+            if not url:
+                return {"error": "No URL configured"}
+            from fastmcp import Client
+            async with Client(url) as client:
+                result = await client.call_tool(tool_name, arguments)
+                if result.content:
+                    return result.content[0].text
+                return {"error": "No content in response"}
+        except Exception as e:
+            return {"error": str(e)}
+
+    # ==================== Streamable HTTP 传输协议 ====================
+
+    # 通过Streamable HTTP协议获取MCP工具列表
     async def _get_http_tools(self, config: dict) -> list[dict]:
         try:
             url = config.get("url", "")
@@ -178,7 +216,7 @@ class MCPClientManager:
             print(f"Error getting HTTP tools: {e}")
             return []
 
-    # 通过HTTP(SSE/Streamable HTTP)协议调用MCP工具
+    # 通过Streamable HTTP协议调用MCP工具
     async def _call_http_tool(self, config: dict, tool_name: str, arguments: dict) -> Any:
         try:
             url = config.get("url", "")
@@ -227,7 +265,7 @@ class MCPClientManager:
                     continue
         return None
 
-    # 初始化MCP HTTP会话，返回Session ID
+    # 初始化Streamable HTTP会话，返回Session ID
     async def _init_http_session(self, client: httpx.AsyncClient, url: str, headers: dict) -> str | None:
         try:
             resp = await client.post(

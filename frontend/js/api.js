@@ -36,7 +36,9 @@ const api = {
         const data = await response.json();
         if (!response.ok) {
             let msg = '请求失败';
-            if (typeof data.detail === 'string') {
+            if (data.message && typeof data.message === 'string') {
+                msg = data.message;
+            } else if (typeof data.detail === 'string') {
                 msg = data.detail;
             } else if (Array.isArray(data.detail)) {
                 msg = data.detail.map(d => d.msg).join('; ');
@@ -161,7 +163,7 @@ const api = {
 
             const data = await response.json();
             if (!response.ok) {
-                throw new Error(data.detail || '上传失败');
+                throw new Error(data.message || data.detail || '上传失败');
             }
             return data;
         },
