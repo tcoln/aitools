@@ -4,6 +4,7 @@
 
 import json
 import os
+import base64
 import asyncio
 from typing import Any
 import httpx
@@ -29,7 +30,11 @@ class MCPClientManager:
         else:
             return []
 
-    async def call_tool(self, service_config: dict, tool_name: str, arguments: dict) -> Any:
+    async def call_tool(
+        self, service_config: dict, tool_name: str, arguments: dict,
+        files: list[dict] | None = None,
+    ) -> Any:
+        arguments = self._inject_file_content(tool_name, arguments, files)
         transport = service_config.get("transport_type", "stdio")
         if transport == "stdio":
             return await self._call_stdio_tool(service_config, tool_name, arguments)
@@ -39,6 +44,33 @@ class MCPClientManager:
             return await self._call_http_tool(service_config, tool_name, arguments)
         else:
             raise ValueError(f"Unsupported transport type: {transport}")
+
+    def _inject_file_content(
+        self, tool_name: str, arguments: dict, files: list[dict] | None
+    ) -> dict:
+        if tool_name != "parse_bank_statement":
+            return arguments
+        if arguments.get("pdf_content") or arguments.get("pdf_path"):
+            return arguments
+        if not files:
+            return arguments
+        file_path = None
+        for f in files:
+            fp = f.get("file_path", "")
+            if fp and os.path.exists(fp):
+                file_path = fp
+                break
+        if not file_path:
+            return arguments
+        try:
+            with open(file_path, "rb") as fh:
+                pdf_bytes = fh.read()
+            arguments["pdf_content"] = base64.b64encode(pdf_bytes).decode("utf-8")
+            arguments.pop("pdf_path", None)
+            print(f"MCP: 自动注入 pdf_content, 文件={os.path.basename(file_path)}, 大小={len(pdf_bytes)} bytes")
+        except Exception as e:
+            print(f"MCP: 注入 pdf_content 失败: {e}")
+        return arguments
 
     # 通过stdio协议获取MCP工具列表
     async def _get_stdio_tools(self, config: dict) -> list[dict]:

@@ -108,7 +108,13 @@ async function sendMessage() {
         for (const att of attachments) {
             const isError = att.content && (att.content.startsWith('[解析失败') || att.content.startsWith('[不支持') || att.content.startsWith('[无法解码') || att.content.startsWith('[旧版'));
             if (att.content && !isError) {
-                fileContents.push(`\n\n[文件: ${att.name}]\n${att.content}`);
+                if (att.mcp_path) {
+                    fileContents.push(`\n\n[文件: ${att.name}]\n[MCP路径: ${att.mcp_path}]\n${att.content}`);
+                } else if (att.file_path) {
+                    fileContents.push(`\n\n[文件: ${att.name}]\n[服务器路径: ${att.file_path}]\n${att.content}`);
+                } else {
+                    fileContents.push(`\n\n[文件: ${att.name}]\n${att.content}`);
+                }
             } else if (isError) {
                 fileContents.push(`\n\n[附件: ${att.name} (${att.content})]`);
             } else {
@@ -122,7 +128,7 @@ async function sendMessage() {
 
     chatInput.value = '';
     chatInput.style.height = 'auto';
-    const savedAttachments = attachments.map(a => ({ name: a.name, content: a.content || '' }));
+    const savedAttachments = attachments.map(a => ({ name: a.name, content: a.content || '', file_path: a.file_path || '', mcp_path: a.mcp_path || '' }));
     clearAttachments();
 
     if (chatMessages.querySelector('.chat-welcome')) {
@@ -305,6 +311,8 @@ async function handleFileSelect(e) {
         const ext = '.' + file.name.split('.').pop().toLowerCase();
         console.log(`[附件] 处理文件: ${file.name}, 扩展名: ${ext}, 类型: ${file.type}, 大小: ${file.size}`);
         let content = null;
+        let filePath = '';
+        let mcpPath = '';
 
         if (textExtensions.includes(ext) || file.type.startsWith('text/')) {
             if (file.size > MAX_TEXT_SIZE) {
@@ -327,15 +335,19 @@ async function handleFileSelect(e) {
             try {
                 const result = await api.chat.uploadFile(file);
                 content = result.content;
-                console.log(`[附件] ${file.name} 解析成功, 长度: ${content.length}`);
+                filePath = result.file_path || '';
+                mcpPath = result.mcp_path || '';
+                console.log(`[附件] ${file.name} 解析成功, 长度: ${content.length}, 路径: ${filePath}, MCP路径: ${mcpPath}`);
             } catch (err) {
                 console.error('Failed to parse office file:', err);
                 content = `[解析失败: ${err.message}]`;
+                filePath = '';
+                mcpPath = '';
             }
         } else {
             console.log(`[附件] ${file.name} 格式不支持，仅显示文件名`);
         }
-        attachments.push({ name: file.name, content: content });
+        attachments.push({ name: file.name, content: content, file_path: filePath || '', mcp_path: mcpPath || '' });
     }
     fileInput.value = '';
     renderAttachments();

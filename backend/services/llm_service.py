@@ -2,9 +2,11 @@
 # Email: guolintan@qq.com
 # Created: 2026-07-22
 
+import base64
 import json
 import logging
 import os
+import uuid
 from typing import AsyncGenerator
 import httpx
 
@@ -24,20 +26,20 @@ class LLMService:
 
     # 判断当前模型是否为Ollama提供
     def _is_ollama(self, model: str | None = None) -> bool:
-        if settings.LLM_PROVIDER == "ollama":
-            return True
-        if settings.LLM_PROVIDER == "openai":
-            return False
         if model and model in self._model_providers:
             return self._model_providers[model] == "ollama"
+        if model and ":" in model:
+            return True
+        if settings.LLM_PROVIDER == "ollama":
+            return True
         return False
 
     # 判断当前模型是否为ChatABC提供
     def _is_chatabc(self, model: str | None = None) -> bool:
-        if settings.LLM_PROVIDER == "chatabc":
-            return True
         if model and model in self._model_providers:
             return self._model_providers[model] == "chatabc"
+        if settings.LLM_PROVIDER == "chatabc":
+            return True
         return False
 
     # 判断当前模型是否为ChatABC2提供（支持本地工具调用）
@@ -89,6 +91,9 @@ class LLMService:
         self, messages: list[dict],
         conversation_id: str = "",
         files: list[dict] | None = None,
+        tool_to_service_map: dict[str, str] | None = None,
+        mcp_services: list[dict] | None = None,
+        model: str | None = None,
     ) -> AsyncGenerator[dict, None]:
         from services.chatabc_service import chatabc_service
 
@@ -101,14 +106,18 @@ class LLMService:
                 self._chatabc_sessions[conversation_id] = session_id
 
         uploaded_files = []
+        pdf_base64_content = ""
         if files and session_id:
             for f in files:
                 filename = f.get("name", "unknown")
-                content = f.get("content", "")
-                if content:
+                file_path = f.get("file_path", "")
+                if file_path and os.path.exists(file_path):
                     try:
+                        with open(file_path, "rb") as fh:
+                            pdf_b64 = base64.b64encode(fh.read()).decode("utf-8")
+                        pdf_base64_content = pdf_b64
                         result = await chatabc_service.upload_file(
-                            session_id, filename, content.encode("utf-8")
+                            session_id, filename + ".b64.txt", pdf_b64.encode("utf-8")
                         )
                         uploaded_files.append({
                             "file_id": os.path.splitext(filename)[0],
@@ -116,30 +125,143 @@ class LLMService:
                             "content_type": "doc",
                             "filePath": result.get("file_path", ""),
                         })
+                        logger.info(f"ChatABC uploaded base64 content, size={len(pdf_b64)}")
                     except Exception as e:
                         logger.warning(f"ChatABC upload_file failed: {e}")
+                else:
+                    content = f.get("content", "")
+                    if content:
+                        try:
+                            result = await chatabc_service.upload_file(
+                                session_id, filename, content.encode("utf-8")
+                            )
+                            uploaded_files.append({
+                                "file_id": os.path.splitext(filename)[0],
+                                "url": filename,
+                                "content_type": "doc",
+                                "filePath": result.get("file_path", ""),
+                            })
+                        except Exception as e:
+                            logger.warning(f"ChatABC upload_file failed: {e}")
 
-        txt = ""
-        for m in messages:
-            if m["role"] == "user":
-                txt = m["content"]
-            elif m["role"] == "assistant" and m.get("content"):
-                txt = f"[历史回复]: {m['content']}\n\n用户: {txt}"
+        current_messages = list(messages)
+        max_rounds = 5
 
-        logger.info(f"ChatABC chat: session_id={session_id}, txt_len={len(txt)}, files={len(uploaded_files)}")
+        for round_num in range(max_rounds):
+            txt = ""
+            for m in current_messages:
+                if m["role"] == "user":
+                    txt = m["content"]
+                elif m["role"] == "tool" and m.get("content"):
+                    txt = f"[工具结果]: {m['content']}\n\n用户: {txt}"
+                elif m["role"] == "assistant" and m.get("content"):
+                    txt = f"[历史回复]: {m['content']}\n\n用户: {txt}"
 
-        async for event in chatabc_service.chat(session_id, txt, files=uploaded_files, stream=True):
-            evt_type = event["event"]
-            evt_data = event["data"]
-            if evt_type == "chunk":
-                content = evt_data.get("content", "")
-                if content:
-                    yield {"type": "content", "content": content}
-            elif evt_type == "failed":
-                raise Exception(f"ChatABC error: {json.dumps(evt_data, ensure_ascii=False)}")
-            elif evt_type == "done":
-                if evt_data.get("status") != "success":
-                    raise Exception(f"ChatABC done with error: {json.dumps(evt_data, ensure_ascii=False)}")
+            if pdf_base64_content and round_num == 0:
+                txt = (
+                    f"{txt}\n\n"
+                    "请使用 parse_bank_statement 工具解析银行流水。\n"
+                    "工具参数 pdf_content 的值应为已上传文件（.b64.txt）的完整内容。\n"
+                    "请读取该文件并将内容作为 pdf_content 参数传递。"
+                )
+
+            logger.info(f"ChatABC chat: round={round_num}, session_id={session_id}, txt_len={len(txt)}, files={len(uploaded_files)}")
+
+            tool_calls_found = []
+            buffered_chunks = []
+            tool_result_error = None
+
+            async for event in chatabc_service.chat(
+                session_id, txt,
+                files=uploaded_files if round_num == 0 else None,
+                stream=True,
+            ):
+                evt_type = event["event"]
+                evt_data = event["data"]
+
+                if evt_type == "chunk":
+                    content = evt_data.get("content", "")
+                    if tool_calls_found:
+                        buffered_chunks.append(("chunk", content))
+                    elif content:
+                        yield {"type": "content", "content": content}
+                elif evt_type == "message":
+                    msg_tool_calls = evt_data.get("tool_calls", [])
+                    if msg_tool_calls:
+                        tool_calls_found = msg_tool_calls
+                        logger.info(f"ChatABC tool_calls: {[tc.get('name') or tc.get('function',{}).get('name') for tc in msg_tool_calls]}")
+                    if evt_data.get("type") == "function":
+                        content_list = evt_data.get("content", [])
+                        raw = ""
+                        if isinstance(content_list, list) and content_list:
+                            raw = content_list[0].get("text", "")
+                        elif isinstance(content_list, str):
+                            raw = content_list
+                        else:
+                            raw = str(content_list)
+                        try:
+                            parsed = json.loads(raw) if isinstance(raw, str) else raw
+                        except json.JSONDecodeError:
+                            parsed = {"raw": raw}
+                        if parsed.get("error"):
+                            tool_result_error = parsed["error"]
+                            logger.warning(f"ChatABC tool error: {tool_result_error}")
+                    if tool_calls_found:
+                        buffered_chunks.append(("message", evt_data))
+                elif evt_type == "failed":
+                    raise Exception(f"ChatABC error: {json.dumps(evt_data, ensure_ascii=False)}")
+                elif evt_type == "done":
+                    if tool_calls_found and tool_result_error and mcp_services and tool_to_service_map:
+                        logger.info(f"ChatABC tool failed, executing locally (round {round_num})")
+                        converted_calls = []
+                        for tc in tool_calls_found:
+                            if isinstance(tc, dict):
+                                name = tc.get("name") or tc.get("function", {}).get("name", "")
+                                args = tc.get("args") or tc.get("function", {}).get("arguments", {})
+                                if isinstance(args, str):
+                                    try:
+                                        args = json.loads(args)
+                                    except json.JSONDecodeError:
+                                        args = {}
+                                call_id = tc.get("id", str(uuid.uuid4()))
+                                converted_calls.append({
+                                    "id": call_id,
+                                    "function": {"name": name, "arguments": json.dumps(args, ensure_ascii=False)},
+                                })
+
+                        if converted_calls:
+                            results = []
+                            async for tool_event in self.execute_tool_calls(
+                                converted_calls, mcp_services, tool_to_service_map, files=files,
+                            ):
+                                if tool_event["type"] == "tool_start":
+                                    yield tool_event
+                                elif tool_event["type"] == "tool_result":
+                                    yield tool_event
+                                    results.append({
+                                        "role": "tool",
+                                        "tool_call_id": converted_calls[len(results)]["id"],
+                                        "content": json.dumps(tool_event["result"], ensure_ascii=False),
+                                    })
+
+                            current_messages.append({
+                                "role": "assistant",
+                                "content": None,
+                                "tool_calls": converted_calls,
+                            })
+                            current_messages.extend(results)
+                            continue
+
+                    if not tool_calls_found:
+                        for chunk_type, content in buffered_chunks:
+                            if chunk_type == "chunk" and content:
+                                yield {"type": "content", "content": content}
+
+                    if evt_data.get("status") != "success":
+                        raise Exception(f"ChatABC done with error: {json.dumps(evt_data, ensure_ascii=False)}")
+                    return
+
+            return
 
     # 流式调用ChatABC2（支持本地MCP工具和内置工具调用）
     async def _stream_chatabc2(
@@ -164,14 +286,18 @@ class LLMService:
                 self._chatabc_sessions[conversation_id] = session_id
 
         uploaded_files = []
+        pdf_base64_content = ""
         if files and session_id:
             for f in files:
                 filename = f.get("name", "unknown")
-                content = f.get("content", "")
-                if content:
+                file_path = f.get("file_path", "")
+                if file_path and os.path.exists(file_path):
                     try:
+                        with open(file_path, "rb") as fh:
+                            pdf_b64 = base64.b64encode(fh.read()).decode("utf-8")
+                        pdf_base64_content = pdf_b64
                         result = await chatabc_service.upload_file(
-                            session_id, filename, content.encode("utf-8")
+                            session_id, filename + ".b64.txt", pdf_b64.encode("utf-8")
                         )
                         uploaded_files.append({
                             "file_id": os.path.splitext(filename)[0],
@@ -179,8 +305,24 @@ class LLMService:
                             "content_type": "doc",
                             "filePath": result.get("file_path", ""),
                         })
+                        logger.info(f"ChatABC2 uploaded base64 content, size={len(pdf_b64)}")
                     except Exception as e:
                         logger.warning(f"ChatABC2 upload_file failed: {e}")
+                else:
+                    content = f.get("content", "")
+                    if content:
+                        try:
+                            result = await chatabc_service.upload_file(
+                                session_id, filename, content.encode("utf-8")
+                            )
+                            uploaded_files.append({
+                                "file_id": os.path.splitext(filename)[0],
+                                "url": filename,
+                                "content_type": "doc",
+                                "filePath": result.get("file_path", ""),
+                            })
+                        except Exception as e:
+                            logger.warning(f"ChatABC2 upload_file failed: {e}")
 
         max_rounds = 5
         current_messages = messages
@@ -194,6 +336,14 @@ class LLMService:
                     txt = f"[工具结果]: {m['content']}\n\n用户: {txt}"
                 elif m["role"] == "assistant" and m.get("content"):
                     txt = f"[历史回复]: {m['content']}\n\n用户: {txt}"
+
+            if pdf_base64_content and round_num == 0:
+                txt = (
+                    f"{txt}\n\n"
+                    "请使用 parse_bank_statement 工具解析银行流水。\n"
+                    "工具参数 pdf_content 的值应为已上传文件（.b64.txt）的完整内容。\n"
+                    "请读取该文件并将内容作为 pdf_content 参数传递。"
+                )
 
             logger.info(f"ChatABC2 chat: session_id={session_id}, round={round_num}, txt_len={len(txt)}")
 
@@ -253,7 +403,7 @@ class LLMService:
                     )
                     if service_config:
                         result = await mcp_client_manager.call_tool(
-                            service_config, func_name, func_args
+                            service_config, func_name, func_args, files=files,
                         )
                     else:
                         result = {"error": f"Service {service_name} not found"}
@@ -318,11 +468,18 @@ class LLMService:
         files: list[dict] | None = None,
     ) -> AsyncGenerator[dict, None]:
         model = model or settings.OPENAI_MODEL
+        if not self._model_providers:
+            await self.fetch_models()
         logger.info(f"LLM chat: model={model}, provider=ollama={self._is_ollama(model)}, chatabc={self._is_chatabc(model)}, chatabc2={self._is_chatabc2(model)}")
 
         if self._is_chatabc(model):
             messages = history + [{"role": "user", "content": message}]
-            async for event in self._stream_chatabc(messages, conversation_id, files=files):
+            async for event in self._stream_chatabc(
+                messages, conversation_id, files=files,
+                tool_to_service_map=tool_to_service_map,
+                mcp_services=mcp_services,
+                model=model,
+            ):
                 yield event
             return
 
@@ -404,6 +561,7 @@ class LLMService:
         tool_calls: list[dict],
         mcp_services: list[dict],
         tool_to_service_map: dict,
+        files: list[dict] | None = None,
     ) -> AsyncGenerator[dict, None]:
         results = []
         for tc in tool_calls:
@@ -436,7 +594,7 @@ class LLMService:
             yield {"type": "tool_start", "tool_name": func_name, "arguments": func_args}
 
             result = await mcp_client_manager.call_tool(
-                service_config, func_name, func_args
+                service_config, func_name, func_args, files=files,
             )
             results.append({
                 "role": "tool",
@@ -454,11 +612,19 @@ class LLMService:
         mcp_tools: list[dict],
         model: str | None = None,
         conversation_id: str = "",
+        tool_to_service_map: dict[str, str] | None = None,
+        mcp_services: list[dict] | None = None,
+        files: list[dict] | None = None,
     ) -> AsyncGenerator[str, None]:
         model = model or settings.OPENAI_MODEL
 
         if self._is_chatabc(model):
-            async for event in self._stream_chatabc(messages, conversation_id):
+            async for event in self._stream_chatabc(
+                messages, conversation_id,
+                tool_to_service_map=tool_to_service_map,
+                mcp_services=mcp_services,
+                model=model,
+            ):
                 if event["type"] == "content":
                     yield event["content"]
             return

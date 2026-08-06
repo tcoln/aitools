@@ -5,12 +5,15 @@
 import json
 import uuid
 import re
+import os
+import subprocess
 import asyncio
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from fastapi.responses import StreamingResponse
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from config import settings
 from database import get_db, async_session
 from schemas.chat import ChatRequest
 from models.user import User
@@ -54,6 +57,35 @@ async def list_models(current_user: User = Depends(get_current_user)):
     return await llm_service.fetch_models()
 
 
+# 上传文件保存目录
+UPLOAD_DIR = os.path.join(settings.DATA_DIR, "uploads")
+MCP_CONTAINER_NAME = "toolserver"
+MCP_CONTAINER_TMP = "/tmp"
+
+
+def _ensure_upload_dir():
+    os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+
+def _copy_to_mcp_container(host_path: str, filename: str) -> str | None:
+    """将文件复制到MCP Docker容器中，返回容器内路径"""
+    try:
+        container_path = f"{MCP_CONTAINER_TMP}/{filename}"
+        result = subprocess.run(
+            ["docker", "cp", host_path, f"{MCP_CONTAINER_NAME}:{container_path}"],
+            capture_output=True, timeout=10,
+        )
+        if result.returncode == 0:
+            return container_path
+        else:
+            stderr = result.stderr.decode(errors="replace")[:200]
+            print(f"docker cp 失败: {stderr}")
+            return None
+    except Exception as e:
+        print(f"docker cp 异常: {e}")
+        return None
+
+
 # 上传并解析文件，支持xlsx、docx、txt等格式
 @router.post("/upload")
 async def upload_file(
@@ -63,10 +95,24 @@ async def upload_file(
     try:
         content = await file.read()
         parsed = parse_file(file.filename, content)
+
+        _ensure_upload_dir()
+        safe_name = f"{uuid.uuid4().hex}_{file.filename}"
+        file_path = os.path.join(UPLOAD_DIR, safe_name)
+        with open(file_path, "wb") as f:
+            f.write(content)
+
+        mcp_path = _copy_to_mcp_container(file_path, safe_name)
+
         if parsed.startswith("["):
             if "解析失败" in parsed or "未安装" in parsed or "不支持" in parsed or "无法解码" in parsed:
                 raise HTTPException(status_code=400, detail=parsed.strip("[]"))
-        return {"filename": file.filename, "content": parsed}
+        return {
+            "filename": file.filename,
+            "content": parsed,
+            "file_path": file_path,
+            "mcp_path": mcp_path or "",
+        }
     except HTTPException:
         raise
     except Exception as e:
@@ -216,7 +262,7 @@ async def send_message(
                         for s in active_services
                     ]
                     async for event in llm_service.execute_tool_calls(
-                        mcp_tool_calls, mcp_service_configs, tool_to_service_map,
+                        mcp_tool_calls, mcp_service_configs, tool_to_service_map, files=req.files,
                     ):
                         if event["type"] == "tool_start":
                             yield f"data: {json.dumps({'type': 'tool_start', 'tool_name': event['tool_name'], 'arguments': event['arguments']})}\n\n"
