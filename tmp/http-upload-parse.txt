@@ -1,0 +1,327 @@
+curl 'http://aiml-pub.aisp.test.abc/agent-api/tool-agent-1-e70d3263/chatabc/upload_file' \
+  -H 'Accept: application/json, text/plain, */*' \
+  -H 'Accept-Language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: multipart/form-data; boundary=----WebKitFormBoundarypxbZsjU6SLrHxnuq' \
+  -b 'chatabc-back-f5-cookie=1785911968.031.3167914.845807|c5a50ceef39483a644b3691a5cea9bd6; agt_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDb25zb2xlIEFQSSBQYXNzcG9ydCIsInVzZXJfaWQiOiI1MzA1YTdjOS05MzZlLTQ5MGEtOTA0Yi1kOGM4ZjdlYjA5YzAiLCJpc3MiOiJTRUxGX0hPU1RFRCIsImV4cCI6MTc4ODUwMzk1OH0.sMonjmpk2ou3fb5M8o0Z26FBsDiGKimnagDT2qXfRpQ' \
+  -H 'Origin: http://aiml-pub.aisp.test.abc' \
+  -H 'Referer: http://aiml-pub.aisp.test.abc/agent-front-dev/' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0' \
+  --data-raw $'------WebKitFormBoundarypxbZsjU6SLrHxnuq\r\nContent-Disposition: form-data; name="file"; filename="陶莹新材料-工行-5月.pdf"\r\nContent-Type: application/pdf\r\n\r\n\r\n------WebKitFormBoundarypxbZsjU6SLrHxnuq\r\nContent-Disposition: form-data; name="session_id"\r\n\r\ncf5544b6-5d02-445a-90cd-9ce9295128ee\r\n------WebKitFormBoundarypxbZsjU6SLrHxnuq--\r\n' \
+  --insecure ;
+
+{"resCode":"FAIAG0000","resMessage":"SUCCESS","responseId":"ceae6cac-84ad-4c75-bc71-eadc61219805","timestamp":1785914108424,"data":{"file_path":"/agent-workspace/tmpFile/cf5544b6-5d02-445a-90cd-9ce9295128ee/陶莹新材料-工行-5月.pdf","relative_path":"陶莹新材料-工行-5月.pdf","filename":"陶莹新材料-工行-5月.pdf","subfolder":""}}
+
+curl 'http://aiml-pub.aisp.test.abc/agent-api/tool-agent-1-e70d3263/chatabc/chat' \
+  -H 'Accept-Language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Type: application/json' \
+  -b 'chatabc-back-f5-cookie=1785911968.031.3167914.845807|c5a50ceef39483a644b3691a5cea9bd6; agt_token=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDb25zb2xlIEFQSSBQYXNzcG9ydCIsInVzZXJfaWQiOiI1MzA1YTdjOS05MzZlLTQ5MGEtOTA0Yi1kOGM4ZjdlYjA5YzAiLCJpc3MiOiJTRUxGX0hPU1RFRCIsImV4cCI6MTc4ODUwMzk1OH0.sMonjmpk2ou3fb5M8o0Z26FBsDiGKimnagDT2qXfRpQ' \
+  -H 'Origin: http://aiml-pub.aisp.test.abc' \
+  -H 'Referer: http://aiml-pub.aisp.test.abc/agent-front-dev/' \
+  -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0' \
+  -H 'accept: text/event-stream' \
+  -H 'authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJDb25zb2xlIEFQSSBQYXNzcG9ydCIsInVzZXJfaWQiOiI1MzA1YTdjOS05MzZlLTQ5MGEtOTA0Yi1kOGM4ZjdlYjA5YzAiLCJpc3MiOiJTRUxGX0hPU1RFRCIsImV4cCI6MTc4ODUwMzk1OH0.sMonjmpk2ou3fb5M8o0Z26FBsDiGKimnagDT2qXfRpQ' \
+  --data-raw '{"appId":"BDC201704_01","trCode":"AISPNLPCHATBOT","trVersion":"1","timestamp":1785914108455,"requestId":"2495f3f9-b71e-42f9-a73b-ce69065da158","data":{"session_id":"cf5544b6-5d02-445a-90cd-9ce9295128ee","txt":"解析流水，用表格形式返回流水详情","files":[{"file_id":"陶莹新材料-工行-5月","url":"陶莹新材料-工行-5月.pdf","content_type":"doc","filePath":"/agent-workspace/tmpFile/cf5544b6-5d02-445a-90cd-9ce9295128ee/陶莹新材料-工行-5月.pdf"}],"stream":true}}' \
+  --insecure
+
+event:chat_started
+data:{"chat_id":"cf5544b6-5d02-445a-90cd-9ce9295128ee#3","agent_id":"e70d3263-4c0d-4eba-8f9e-ef7ba781fd0a","agent_version":"1"}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":"The"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":" user wants to"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":" parse a bank"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":" statement PDF file"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":" located at `/"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":"agent-workspace"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":"/tmpFile/c"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":"f55"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":"44b"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":"6-5"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":"d02"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":"-44"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":"5a-"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":"90cd"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":"-9ce"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":"929"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":"512"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":"8ee/"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":"陶莹新材料"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":"-工行-"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":"5月.pdf"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":"`.\nI"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":" need to use"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":" the `parse"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":"_bank_statement`"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":" tool with"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":" the `pdf"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":"_path` argument"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":".\nThe"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":" user"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":" requested"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":" the output in"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":" a table format"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":".\n\n"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":"1"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":".  Call"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":" `parse_bank"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":"_statement` with"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":" the"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":" provided file"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":" path.\n"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":"2. "},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":" Format the result"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":" into a table"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"","additional_kwargs":{"reasoning":".\n"},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"\n\n<tool_call>\n","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"{\"name\":","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":" \"parse_bank","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"_statement\", \"","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"arguments\": {\"","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"pdf_path\":","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":" \"/agent-work","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"space/tmpFile","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"/cf5","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"544","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"b6-","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"5d0","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"2-4","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"45a","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"-90","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"cd-9","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"ce92","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"951","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"28ee","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"/陶莹","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"新材料-工行","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"-5月","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":".pdf\"}}\n","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"</tool_call>","additional_kwargs":{"tool_calls":[{"id":"491bad89-be1e-45ed-8b38-edf2d436bdb0","function":{"name":"parse_bank_statement","arguments":"{\"pdf_path\": \"/agent-workspace/tmpFile/cf5544b6-5d02-445a-90cd-9ce9295128ee/陶莹新材料-工行-5月.pdf\"}"}}]},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[{"name":"parse_bank_statement","args":{"pdf_path":"/agent-workspace/tmpFile/cf5544b6-5d02-445a-90cd-9ce9295128ee/陶莹新材料-工行-5月.pdf"},"id":"491bad89-be1e-45ed-8b38-edf2d436bdb0","type":"tool_call"}],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:message
+data:{"content":"\n\n<tool_call>\n{\"name\": \"parse_bank_statement\", \"arguments\": {\"pdf_path\": \"/agent-workspace/tmpFile/cf5544b6-5d02-445a-90cd-9ce9295128ee/陶莹新材料-工行-5月.pdf\"}}\n</tool_call>","additional_kwargs":{"reasoning":"The user wants to parse a bank statement PDF file located at `/agent-workspace/tmpFile/cf5544b6-5d02-445a-90cd-9ce9295128ee/陶莹新材料-工行-5月.pdf`.\nI need to use the `parse_bank_statement` tool with the `pdf_path` argument.\nThe user requested the output in a table format.\n\n1.  Call `parse_bank_statement` with the provided file path.\n2.  Format the result into a table.\n","tool_calls":[{"id":"491bad89-be1e-45ed-8b38-edf2d436bdb0","function":{"name":"parse_bank_statement","arguments":"{\"pdf_path\": \"/agent-workspace/tmpFile/cf5544b6-5d02-445a-90cd-9ce9295128ee/陶莹新材料-工行-5月.pdf\"}"}}]},"response_metadata":{},"type":"AIMessageChunk","name":null,"id":"lc_run--019fd0c6-b352-7c73-8ad8-bda1be1f5960","tool_calls":[{"name":"parse_bank_statement","args":{"pdf_path":"/agent-workspace/tmpFile/cf5544b6-5d02-445a-90cd-9ce9295128ee/陶莹新材料-工行-5月.pdf"},"id":"491bad89-be1e-45ed-8b38-edf2d436bdb0","type":"tool_call"}],"invalid_tool_calls":[],"usage_metadata":null,"tool_call_chunks":[{"name":"parse_bank_statement","args":"{\"pdf_path\": \"/agent-workspace/tmpFile/cf5544b6-5d02-445a-90cd-9ce9295128ee/陶莹新材料-工行-5月.pdf\"}","id":"491bad89-be1e-45ed-8b38-edf2d436bdb0","index":null,"type":"tool_call_chunk"}],"chunk_position":null}
+
+event:message
+data:{"content":[{"type":"text","text":"{\"error\": \"文件不存在: /agent-workspace/tmpFile/cf5544b6-5d02-445a-90cd-9ce9295128ee/陶莹新材料-工行-5月.pdf\"}","id":"lc_4c86f20d-d353-4188-a715-d59e8c59c64b"}],"additional_kwargs":{},"response_metadata":{},"type":"function","name":"parse_bank_statement","id":null}
+
+event:chunk
+data:{"content":"\n\n抱歉，","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"无法解析流水","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"。系统提示","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"文件不存在：","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"`/agent","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"-workspace/tmp","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"File/cf","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"554","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"4b6","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"-5d","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"02-","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"445","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"a-9","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"0cd-","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"9ce9","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"295","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"128","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"ee/陶","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"莹新材料-","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"工行-5","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"月.pdf`","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"。\n\n请","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"检查文件路径","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"是否正确，或者","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"重新上传文件","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:chunk
+data:{"content":"。","additional_kwargs":{},"response_metadata":{},"type":"ai","name":null,"id":null,"tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null}
+
+event:message
+data:{"content":"\n\n抱歉，无法解析流水。系统提示文件不存在：`/agent-workspace/tmpFile/cf5544b6-5d02-445a-90cd-9ce9295128ee/陶莹新材料-工行-5月.pdf`。\n\n请检查文件路径是否正确，或者重新上传文件。","additional_kwargs":{},"response_metadata":{},"type":"AIMessageChunk","name":null,"id":"lc_run--019fd0c6-ba04-72e0-9224-d3f9f9678f87","tool_calls":[],"invalid_tool_calls":[],"usage_metadata":null,"tool_call_chunks":[],"chunk_position":null}
+
+event:done
+data:{"status":"success","rescode":"FAIAG0000"}
+
